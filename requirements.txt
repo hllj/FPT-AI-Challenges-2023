@@ -1,0 +1,7 @@
+fastapi
+openai
+llama_index
+cohere
+uvicorn[standard]
+llama-cpp-python
+python-dotenv
