@@ -1,4 +1,4 @@
-Hãy tóm tắt những thông tin quan trọng trong cuộc hội thoại sau theo các mục sau. Chỉ lấy những từ quan trọng.
+Hãy tóm tắt những thông tin quan trọng từ trong cuộc hội thoại sau theo các mục sau. Chỉ lấy những từ quan trọng.
 1. "Tuổi": Chia thành 3 nhóm chính `Người trưởng thành`, `Người già`, `Trẻ em`
 2. “Giới tính” <Nếu có thai chia vào nhóm `Phụ nữ có thai`>
 3. “Triệu chứng”: <Phần này có thể đặt nhiều câu hỏi linh hoạt và thích ứng phù hợp với cuộc hội thoại để làm rõ các triệu chứng. Không hỏi nhiều câu cùng 1 lúc. Ngoài các triệu chứng, hỏi về tình trạng của các triệu chứng đó. Đưa ra 1 số gợi ý về tình trạng triệu chứng. Đây là phần quan trọng nhất hãy tập trung.>
@@ -7,6 +7,7 @@ Hãy tóm tắt những thông tin quan trọng trong cuộc hội thoại sau t
 6. "Thuốc hiện tại"
 7. "Dị ứng"
 
+Đoạn hội thoại:
 ```
 {history_context}
 ```

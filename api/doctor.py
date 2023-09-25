@@ -1,3 +1,4 @@
+import glob
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -16,7 +17,9 @@ from llama_index import VectorStoreIndex, SimpleDirectoryReader
 
 # Create a SimpleDirectoryReader object
 
-reader = SimpleDirectoryReader(input_files=["data/Bệnh lỵ amip.txt","data/Gout.txt", "data/Viêm amidan cấp tính.txt","data/Viêm họng cấp.txt","data/Viêm phế quản cấp.txt","data/Đau khớp.txt"])
+input_files = glob.glob('data/*.txt')
+
+reader = SimpleDirectoryReader(input_files=input_files)
 
 # Load the data from the text file
 documents = reader.load_data()

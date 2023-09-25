@@ -1,5 +1,8 @@
 # Library
+import json
+import time
 import openai
+import requests
 import streamlit as st
 import pandas as pd
 from datetime import datetime
@@ -8,6 +11,21 @@ from datetime import datetime
 def open_file(filepath):
     with open(filepath, 'r', encoding='utf-8') as infile:
         return infile.read()
+    
+def get_summary(history_context):
+    prompt = open_file('prompt/system_summary.txt').format(history_context=history_context)
+    print("Summary", prompt)
+    response = openai.ChatCompletion.create(
+        model='gpt-3.5-turbo',  # Use the selected model name
+        messages=[
+            {"role": "system", "content": prompt}
+        ],
+        temperature=0.0,  # Set temperature
+        max_tokens=2048,  # Set max tokens
+        stream=False,
+    )
+    summary = response.choices[0].message.content
+    return summary
     
 # Custom Streamlit app title and icon
 st.set_page_config(
@@ -41,13 +59,18 @@ if st.sidebar.button(":arrows_counterclockwise: Làm mới cuộc trò chuyện"
     # Clear the chat messages and reset the full response
     st.session_state.messages = []
     full_response = ""
+
+st.session_state.summary = ""
+prev_history_context = ""
     
 # Initialize Chat Messages
 if "messages" not in st.session_state:
     st.session_state.messages = []
-    system_text= open_file('prompt/system_patient.txt')
+    system_text = open_file('prompt/system_patient.txt')
     # Optional
     st.session_state.messages.append({"role": "system", "content": system_text})
+
+
 
 # Initialize full_response outside the user input check
 full_response = ""
@@ -62,9 +85,7 @@ for message in st.session_state.messages:
 
 # User Input and AI Response
 if prompt := st.chat_input("What is up?"):
-    
-    
-    st.session_state.messages.append({"role": "user", "content": prompt})
+    st.session_state.messages.append({"role": "user", "content": prompt.format(summary=st.session_state.summary)})
     with st.chat_message("user"):
         st.markdown(prompt)
 
@@ -86,3 +107,36 @@ if prompt := st.chat_input("What is up?"):
         message_placeholder.markdown(full_response)
 
     st.session_state.messages.append({"role": "assistant", "content": full_response})
+    history_context = "\n"
+    for m in st.session_state.messages[:-1]:
+        if m["role"] == "user":
+            history_context += "Câu trả lời: " + m["content"] + "\n"
+        if m["role"] == "assistant":
+            history_context += "Câu hỏi: " + m["content"] + "\n"
+    history_context += "\n"
+    st.session_state.summary = get_summary(history_context)
+    print("Summary", st.session_state.summary)
+    
+    if "Tôi đã thu thập đủ thông tin" in full_response or 'tôi đã thu thập đủ thông tin' in full_response:
+        st.markdown("Tôi đang xử lý thông tin và gửi thông tin tới cho bác sĩ.")
+        st.session_state.messages.append({"role": "assistant", "content": "Tôi đang xử lý thông tin và gửi thông tin tới cho bác sĩ."})
+        st.session_state.summary = get_summary(history_context)
+        st.markdown("Đây là một số thông tin mà tôi đã cung cấp được\n" + st.session_state.summary)
+        st.session_state.messages.append({"role": "assistant", "content": "Đây là một số thông tin mà tôi đã cung cấp được\n" + st.session_state.summary})
+        
+        url = "http://0.0.0.0:8001/doctor"
+        payload = json.dumps({
+            "summary": st.session_state.summary
+        })
+        headers = {
+            'Content-Type': 'application/json'
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+        
+        doctor_response = 'Đơn thuốc của bác sĩ' + response.json()['data']['response']['response']
+        print('Đơn thuốc của bác sĩ', doctor_response)
+        
+        st.markdown(doctor_response)
+        st.session_state.messages.append({"role": "assistant", "content": doctor_response})
+
