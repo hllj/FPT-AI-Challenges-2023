@@ -2,6 +2,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+import os
+
 from typing import Union
 
 from fastapi import FastAPI
@@ -29,7 +31,7 @@ model = "command"
 temperature = 0 # It can be range from (0-1) as openai
 max_tokens = 512 # token limit
 
-embed_model = Cohere(model="embed-multilingual-v2.0",cohere_api_key="2G8Q6erN971QQLtee4VnNnIrVXolRo4JKe0xHMQo")
+embed_model = Cohere(model="embed-multilingual-v2.0",cohere_api_key=os.environ['COHERE_API_KEY'])
 
 
 service_context = ServiceContext.from_defaults(embed_model=embed_model)
