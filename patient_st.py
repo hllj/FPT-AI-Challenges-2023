@@ -45,6 +45,9 @@ if st.sidebar.button(":arrows_counterclockwise: Làm mới cuộc trò chuyện"
 # Initialize Chat Messages
 if "messages" not in st.session_state:
     st.session_state.messages = []
+    system_text= open_file('prompt/system_patient.txt')
+    # Optional
+    st.session_state.messages.append({"role": "system", "content": system_text})
 
 # Initialize full_response outside the user input check
 full_response = ""
@@ -55,12 +58,11 @@ for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"]) 
 
-system_text= open_file('prompt/system_patient.txt')
+
 
 # User Input and AI Response
 if prompt := st.chat_input("What is up?"):
-    # Optional
-    st.session_state.messages.append({"role": "system", "content": system_text})
+    
     
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
@@ -68,6 +70,7 @@ if prompt := st.chat_input("What is up?"):
 
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
+        print('Chat', st.session_state.messages)
         for response in openai.ChatCompletion.create(
             model='gpt-3.5-turbo',  # Use the selected model name
             messages=[

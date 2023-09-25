@@ -5,3 +5,4 @@ cohere
 uvicorn[standard]
 llama-cpp-python
 python-dotenv
+streamlit
