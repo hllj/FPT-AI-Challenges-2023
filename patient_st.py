@@ -1,5 +1,7 @@
 # Library
+import json
 import openai
+import requests
 import streamlit as st
 import pandas as pd
 from datetime import datetime
@@ -9,6 +11,21 @@ def open_file(filepath):
     with open(filepath, 'r', encoding='utf-8') as infile:
         return infile.read()
     
+def get_summary(history_context):
+    prompt = open_file('prompt/system_summary.txt').format(history_context=history_context)
+    print("Summary", prompt)
+    response = openai.ChatCompletion.create(
+        model='gpt-3.5-turbo',  # Use the selected model name
+        messages=[
+            {"role": "system", "content": prompt}
+        ],
+        temperature=0.0,  # Set temperature
+        max_tokens=2048,  # Set max tokens
+        stream=False,
+    )
+    summary = response.choices[0].message.content
+    return summary
+
 # Custom Streamlit app title and icon
 st.set_page_config(
     page_title="Trợ lý ảo",
@@ -35,7 +52,9 @@ st.sidebar.write("Đây là một trợ lý y tế ảo giúp kết nối ngư�
     giúp người dùng có thể được điều trị các bệnh thông thường từ xa")
 
 openai.api_key = st.secrets["OPENAI_API_KEY"]
-    
+
+system_text= open_file('prompt/system_patient.txt')
+
 # CHAT MODEL
 # Initialize DataFrame to store chat history
 chat_history_df = pd.DataFrame(columns=["Timestamp", "Chat"])
@@ -55,12 +74,14 @@ if st.sidebar.button(":arrows_counterclockwise: Làm mới"):
 
     # Clear the chat messages and reset the full response
     st.session_state.messages = []
+    st.session_state.messages.append({"role": "system", "content": system_text})
     full_response = ""
     
+
+
 # Initialize Chat Messages
 if "messages" not in st.session_state:
     st.session_state.messages = []
-    system_text= open_file('prompt/system_patient.txt')
     # Optional
     st.session_state.messages.append({"role": "system", "content": system_text})
 
@@ -79,7 +100,7 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
-    
+    print('chat', st.session_state.messages)
     # Assistant Message
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
@@ -87,7 +108,7 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
         # Initialize st.status for the task
         with st.status("Processing...", expanded=True) as status:
             for response in openai.ChatCompletion.create(
-                model='gpt-3.5-turbo',  # Use the selected model name
+                model='gpt-3.5-turbo-0613',  # Use the selected model name
                 messages=[
                     {"role": m["role"], "content": m["content"]}
                     for m in st.session_state.messages
@@ -108,3 +129,41 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
     # Append assistant's response to messages
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
+    history_context = "\n"
+    for m in st.session_state.messages[:-1]:
+        if m["role"] == "user":
+            history_context += "Câu trả lời: " + m["content"] + "\n"
+        if m["role"] == "assistant":
+            history_context += "Câu hỏi: " + m["content"] + "\n"
+    history_context += "\n"
+
+    if 'Tôi đã thu thập đủ thông tin' in full_response:
+        st.markdown("Tôi đang xử lý thông tin và gửi thông tin tới cho bác sĩ.")
+        
+        with st.status("Đang tổng hợp thông tin ...", expanded=True) as status:
+            st.session_state.summary = get_summary(history_context)
+            # Update st.status to show that the task is complete
+            status.update(label="Complete!", state="complete", expanded=False)
+            # st.status("Completed!").update("Response generated.")
+        
+        st.markdown("Đây là một số thông tin mà tôi đã cung cấp được\n" + st.session_state.summary)
+        
+        with st.status("Đang gửi tới bác sĩ để chẩn đoán ...", expanded=True) as status:
+            url = "http://0.0.0.0:8001/doctor"
+            payload = json.dumps({
+                "summary": st.session_state.summary
+            })
+            headers = {
+                'Content-Type': 'application/json'
+            }
+
+            response = requests.request("POST", url, headers=headers, data=payload)
+
+            doctor_response = 'Đơn thuốc của bác sĩ:' + response.json()['data']['response']['response']
+            # Update st.status to show that the task is complete
+            status.update(label="Complete!", state="complete", expanded=False)
+            # st.status("Completed!").update("Response generated.")
+    
+        print('Đơn thuốc của bác sĩ:', doctor_response)
+
+        st.markdown(doctor_response)
