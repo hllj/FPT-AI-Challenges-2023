@@ -5,3 +5,5 @@ cohere
 uvicorn[standard]
 llama-cpp-python
 python-dotenv
+pinecone-client
+langchain
