@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 fastapi
 openai
 llama_index
@@ -7,3 +8,13 @@ llama-cpp-python
 python-dotenv
 pinecone-client
 langchain
+=======
+fastapi
+openai
+llama_index
+cohere
+uvicorn[standard]
+llama-cpp-python
+python-dotenv
+streamlit
+>>>>>>> 7d7b7bbafdecd7029ccdbb94023a1ad0ac52c467

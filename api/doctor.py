@@ -1,12 +1,10 @@
+import glob
 from dotenv import load_dotenv
 load_dotenv()
 import os
 from typing import Union
 from fastapi import FastAPI
 from pydantic import BaseModel
-from llama_index import VectorStoreIndex, SimpleDirectoryReader
-from langchain.embeddings.huggingface import HuggingFaceEmbeddings
-from llama_index import LangchainEmbedding, ServiceContext
 from llama_index import (QuestionAnswerPrompt, RefinePrompt)
 from store_db_index import build_index
 from langchain.chat_models import ChatOpenAI
