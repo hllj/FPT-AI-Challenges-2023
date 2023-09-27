@@ -8,3 +8,5 @@ python-dotenv
 pinecone-client
 langchain
 streamlit
+transformers
+watchdog

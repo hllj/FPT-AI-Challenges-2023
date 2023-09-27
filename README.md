@@ -26,3 +26,17 @@ uvicorn api.patient:app --reload --host=0.0.0.0 --port=8000
 ```bash
 uvicorn api.doctor:app --reload --host=0.0.0.0 --port=8001
 ```
+
+# Streamlit UI
+
+## UI cho người bệnh
+
+```bash
+streamlit run patient_st.py
+```
+
+## UI cho bác sĩ
+
+```bash
+streamlit run doctor_st.py
+```

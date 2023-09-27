@@ -10,7 +10,6 @@ from llama_index import (
 )
 from llama_index.vector_stores import PineconeVectorStore
 from llama_index.storage.storage_context import StorageContext
-import pinecone
 from langchain.chat_models import ChatOpenAI
 import pinecone
 load_dotenv()

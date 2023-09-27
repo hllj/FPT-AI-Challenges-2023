@@ -1,5 +1,7 @@
 # Library
+import glob
 import json
+import uuid
 import openai
 import requests
 import streamlit as st
@@ -25,6 +27,17 @@ def get_summary(history_context):
     )
     summary = response.choices[0].message.content
     return summary
+
+def click_button_session(sessionId):
+    f = open(f"users/{sessionId}.json", 'r')
+    state = json.load(f)
+    f.close()
+    st.session_state.messages = state['messages']
+    st.session_state.sessionId = state['sessionId']
+    st.session_state.summary = state['summary']
+
+if 'sessionId' not in st.session_state:
+    st.session_state.sessionId = str(uuid.uuid4())
 
 # Custom Streamlit app title and icon
 st.set_page_config(
@@ -53,40 +66,66 @@ st.sidebar.write("Đây là một trợ lý y tế ảo giúp kết nối ngư�
 
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
-system_text= open_file('prompt/system_patient.txt')
+system_text = open_file('prompt/system_patient.txt')
 
 # CHAT MODEL
-# Initialize DataFrame to store chat history
-chat_history_df = pd.DataFrame(columns=["Timestamp", "Chat"])
 
 st.sidebar.subheader("Làm mới cuộc trò chuyện")
 # Reset Button
 if st.sidebar.button(":arrows_counterclockwise: Làm mới"):
     # Save the chat history to the DataFrame before clearing it
+    state = {
+        'sessionId': st.session_state.sessionId,
+        'messages': st.session_state.messages,
+        'summary': st.session_state.summary
+    }
     if st.session_state.messages:
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        chat_history = "\n".join([f"{m['role']}: {m['content']}" for m in st.session_state.messages])
-        new_entry = pd.DataFrame({"Timestamp": [timestamp], "Chat": [chat_history]})
-        chat_history_df = pd.concat([chat_history_df, new_entry], ignore_index=True)
-
-        # Save the DataFrame to a CSV file
-        chat_history_df.to_csv("chat_history.csv", index=False)
+        with open(f'users/{st.session_state.sessionId}.json', 'w', encoding='utf-8') as f:
+            json.dump(state, f, ensure_ascii=False, indent=4)
 
     # Clear the chat messages and reset the full response
+    st.session_state.sessionId =  str(uuid.uuid4())
     st.session_state.messages = []
     st.session_state.messages.append({"role": "system", "content": system_text})
+    st.session_state.summary = ""
     full_response = ""
-    
 
+st.sidebar.subheader("Các đoạn chat")
+
+path_sessions = glob.glob("users/*.json")
+
+for path_session in path_sessions:
+    sessionId = path_session.split('/')[1].split('.')[0]
+    st.sidebar.button(f"{sessionId}", on_click=click_button_session, args=(sessionId,))
 
 # Initialize Chat Messages
 if "messages" not in st.session_state:
     st.session_state.messages = []
     # Optional
     st.session_state.messages.append({"role": "system", "content": system_text})
+    st.session_state.summary = ""
+    
+if "doctor" not in st.session_state:
+    st.session_state.doctor = {
+        "seen": False,
+        "prescription" : None
+    }
+    with open(f'doctors/{st.session_state.sessionId}.json', 'w', encoding='utf-8') as f:
+        json.dump(st.session_state.doctor, f, ensure_ascii=False, indent=4)
+
 
 # Initialize full_response outside the user input check
 full_response = ""
+
+def get_doctor_notification(sessionId):
+    f = open(f"doctors/{sessionId}.json", 'r')
+    doctor_state = json.load(f)
+    f.close()
+    
+    seen = doctor_state['seen']
+    prescription = doctor_state['prescription']
+    
+    return seen, prescription
 
 # Display Chat History
 for message in st.session_state.messages:
@@ -101,6 +140,17 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
     with st.chat_message("user"):
         st.markdown(prompt)
     print('chat', st.session_state.messages)
+    
+    seen, prescription = get_doctor_notification(st.session_state.sessionId)
+    
+    if seen != st.session_state.doctor['seen']:
+        st.info('Bác sĩ đã tham gia vào đoạn chat', icon="ℹ️")
+        st.session_state.doctor['seen'] = seen
+        
+    if prescription != st.session_state.doctor['prescription'] and prescription != '':
+        st.session_state.messages.append({"role": "doctor", "content": prescription})
+        st.session_state.doctor['prescription'] = prescription
+
     # Assistant Message
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
@@ -122,48 +172,35 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
             
             # Update st.status to show that the task is complete
             status.update(label="Complete!", state="complete", expanded=False)
-            # st.status("Completed!").update("Response generated.")
         
         message_placeholder.markdown(full_response)
     
     # Append assistant's response to messages
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-    history_context = "\n"
-    for m in st.session_state.messages[:-1]:
-        if m["role"] == "user":
-            history_context += "Câu trả lời: " + m["content"] + "\n"
-        if m["role"] == "assistant":
-            history_context += "Câu hỏi: " + m["content"] + "\n"
-    history_context += "\n"
-
-    if 'Tôi đã thu thập đủ thông tin' in full_response:
-        st.markdown("Tôi đang xử lý thông tin và gửi thông tin tới cho bác sĩ.")
-        
+    if 'tôi đã thu thập đủ thông tin' in full_response.lower():
+        st.markdown("Tôi đang xử lý và gửi thông tin tới cho bác sĩ.")
+        history_context = "\n"
+        for m in st.session_state.messages[:-1]:
+            if m["role"] == "user":
+                history_context += "Câu trả lời: " + m["content"] + "\n"
+            if m["role"] == "assistant":
+                history_context += "Câu hỏi: " + m["content"] + "\n"
+        history_context += "\n"
         with st.status("Đang tổng hợp thông tin ...", expanded=True) as status:
             st.session_state.summary = get_summary(history_context)
             # Update st.status to show that the task is complete
             status.update(label="Complete!", state="complete", expanded=False)
             # st.status("Completed!").update("Response generated.")
         
-        st.markdown("Đây là một số thông tin mà tôi đã cung cấp được\n" + st.session_state.summary)
+        st.markdown("Đây là một số thông tin mà tôi đã tổng hợp\n" + st.session_state.summary)
         
-        with st.status("Đang gửi tới bác sĩ để chẩn đoán ...", expanded=True) as status:
-            url = "http://0.0.0.0:8001/doctor"
-            payload = json.dumps({
-                "summary": st.session_state.summary
-            })
-            headers = {
-                'Content-Type': 'application/json'
-            }
-
-            response = requests.request("POST", url, headers=headers, data=payload)
-
-            doctor_response = 'Đơn thuốc của bác sĩ:' + response.json()['data']['response']['response']
-            # Update st.status to show that the task is complete
-            status.update(label="Complete!", state="complete", expanded=False)
-            # st.status("Completed!").update("Response generated.")
+    state = {
+        'sessionId': st.session_state.sessionId,
+        'messages': st.session_state.messages,
+        'summary': st.session_state.summary
+    }
     
-        print('Đơn thuốc của bác sĩ:', doctor_response)
-
-        st.markdown(doctor_response)
+    with open(f'users/{st.session_state.sessionId}.json', 'w', encoding='utf-8') as f:
+        json.dump(state, f, ensure_ascii=False, indent=4)
+        

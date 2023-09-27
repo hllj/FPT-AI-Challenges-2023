@@ -12,4 +12,4 @@ headers = {
 
 response = requests.request("POST", url, headers=headers, data=payload)
 
-print(response.json()['data']['response']['response'])
+print(response.json())
