@@ -20,7 +20,7 @@ from llama_index import SimpleDirectoryReader
 import glob
 
 input_files = []
-for file in glob.glob("data/hubduoc/*.txt"):
+for file in glob.glob("data/*.txt"):
     input_files.append(file)
 
 print(input_files)

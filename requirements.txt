@@ -10,4 +10,6 @@ langchain
 streamlit
 transformers
 watchdog
-pika
+# pika
+# pymongo
+
