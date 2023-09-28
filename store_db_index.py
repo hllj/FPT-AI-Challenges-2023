@@ -20,7 +20,7 @@ from llama_index import SimpleDirectoryReader
 import glob
 
 input_files = []
-for file in glob.glob("data/*.txt"):
+for file in glob.glob("data/hubduoc/*.txt"):
     input_files.append(file)
 
 print(input_files)
@@ -30,7 +30,7 @@ reader = SimpleDirectoryReader(input_files=input_files)
 documents = reader.load_data()
 import re
 regex = r"Triệu chứng:\s*(.*?)\n\s*----------";
-regex2 = r"Chẩn đoán:\s*(.*?)\n\s*----------";
+regex2 = r"Chuẩn đoán:\s*(.*?)\n\s*----------";
 
 for d,b in zip(documents,input_files):
   # print(d.text)
@@ -75,4 +75,5 @@ def build_index():
         print("Index Queried")
         return query_index
     
-# index = build_index()
+if __name__ == "__main__":
+    index = build_index()

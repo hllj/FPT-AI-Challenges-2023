@@ -15,7 +15,8 @@ def open_file(filepath):
     
 def get_summary(history_context):
     prompt = open_file('prompt/system_summary.txt').format(history_context=history_context)
-    print("Summary", prompt)
+    # DEBUG
+    # print("Summary", prompt)
     response = openai.ChatCompletion.create(
         model='gpt-3.5-turbo',  # Use the selected model name
         messages=[
@@ -28,13 +29,13 @@ def get_summary(history_context):
     summary = response.choices[0].message.content
     return summary
 
-def click_button_session(sessionId):
-    f = open(f"users/{sessionId}.json", 'r')
-    state = json.load(f)
-    f.close()
-    st.session_state.messages = state['messages']
-    st.session_state.sessionId = state['sessionId']
-    st.session_state.summary = state['summary']
+# def click_button_session(sessionId):
+#     f = open(f"users/{sessionId}.json", 'r')
+#     state = json.load(f)
+#     f.close()
+#     st.session_state.messages = state['messages']
+#     st.session_state.sessionId = state['sessionId']
+#     st.session_state.summary = state['summary']
 
 if 'sessionId' not in st.session_state:
     st.session_state.sessionId = str(uuid.uuid4())
@@ -64,7 +65,11 @@ st.sidebar.subheader("Mô tả")
 st.sidebar.write("Đây là một trợ lý y tế ảo giúp kết nối người dùng và dược sĩ\
     giúp người dùng có thể được điều trị các bệnh thông thường từ xa")
 
-openai.api_key = st.secrets["OPENAI_API_KEY"]
+# openai.api_key = st.secrets["OPENAI_API_KEY"]
+from dotenv import load_dotenv
+import os
+load_dotenv()
+openai.api_key = os.environ.get('OPENAI_API_KEY')
 
 system_text = open_file('prompt/system_patient.txt')
 
@@ -90,13 +95,13 @@ if st.sidebar.button(":arrows_counterclockwise: Làm mới"):
     st.session_state.summary = ""
     full_response = ""
 
-st.sidebar.subheader("Các đoạn chat")
+# st.sidebar.subheader("Các đoạn chat")
 
-path_sessions = glob.glob("users/*.json")
+# path_sessions = glob.glob("users/*.json")
 
-for path_session in path_sessions:
-    sessionId = path_session.split('/')[1].split('.')[0]
-    st.sidebar.button(f"{sessionId}", on_click=click_button_session, args=(sessionId,))
+# for path_session in path_sessions:
+#     sessionId = path_session.split('/')[1].split('.')[0]
+#     st.sidebar.button(f"{sessionId}", on_click=click_button_session, args=(sessionId,))
 
 # Initialize Chat Messages
 if "messages" not in st.session_state:
@@ -117,15 +122,15 @@ if "doctor" not in st.session_state:
 # Initialize full_response outside the user input check
 full_response = ""
 
-def get_doctor_notification(sessionId):
-    f = open(f"doctors/{sessionId}.json", 'r')
-    doctor_state = json.load(f)
-    f.close()
+# def get_doctor_notification(sessionId):
+#     f = open(f"doctors/{sessionId}.json", 'r')
+#     doctor_state = json.load(f)
+#     f.close()
     
-    seen = doctor_state['seen']
-    prescription = doctor_state['prescription']
+#     seen = doctor_state['seen']
+#     prescription = doctor_state['prescription']
     
-    return seen, prescription
+#     return seen, prescription
 
 # Display Chat History
 for message in st.session_state.messages:
@@ -139,17 +144,18 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
-    print('chat', st.session_state.messages)
+    # DEBUG
+    # print('chat', st.session_state.messages)
     
-    seen, prescription = get_doctor_notification(st.session_state.sessionId)
+    # seen, prescription = get_doctor_notification(st.session_state.sessionId)
     
-    if seen != st.session_state.doctor['seen']:
-        st.info('Bác sĩ đã tham gia vào đoạn chat', icon="ℹ️")
-        st.session_state.doctor['seen'] = seen
+    # if seen != st.session_state.doctor['seen']:
+    #     st.info('Bác sĩ đã tham gia vào đoạn chat', icon="ℹ️")
+    #     st.session_state.doctor['seen'] = seen
         
-    if prescription != st.session_state.doctor['prescription'] and prescription != '':
-        st.session_state.messages.append({"role": "doctor", "content": prescription})
-        st.session_state.doctor['prescription'] = prescription
+    # if prescription != st.session_state.doctor['prescription'] and prescription != '':
+    #     st.session_state.messages.append({"role": "doctor", "content": prescription})
+    #     st.session_state.doctor['prescription'] = prescription
 
     # Assistant Message
     with st.chat_message("assistant"):
@@ -201,6 +207,6 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
         'summary': st.session_state.summary
     }
     
-    with open(f'users/{st.session_state.sessionId}.json', 'w', encoding='utf-8') as f:
-        json.dump(state, f, ensure_ascii=False, indent=4)
+    # with open(f'users/{st.session_state.sessionId}.json', 'w', encoding='utf-8') as f:
+    #     json.dump(state, f, ensure_ascii=False, indent=4)
         
