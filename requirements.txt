@@ -10,3 +10,4 @@ langchain
 streamlit
 transformers
 watchdog
+pika

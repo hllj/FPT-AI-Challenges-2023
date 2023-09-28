@@ -7,7 +7,10 @@ import requests
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-
+# import pika
+# import uuid
+# import os, time
+# import json
 # Get content
 def open_file(filepath):
     with open(filepath, 'r', encoding='utf-8') as infile:
@@ -103,6 +106,28 @@ if st.sidebar.button(":arrows_counterclockwise: Làm mới"):
 #     sessionId = path_session.split('/')[1].split('.')[0]
 #     st.sidebar.button(f"{sessionId}", on_click=click_button_session, args=(sessionId,))
 
+# # Initialize RabbitMQ
+
+# def callback_doctor_app(ch, method, properties, body):
+#     txt = body.decode("utf-8")
+#     st.markdown("Thông tin cuối cùng\n" + txt)
+#     # return body
+
+# url = os.environ.get('CLOUDAMQP_URL', 'amqp://bbcaqtmc:tX2Nex9rE8bJsrFNjvr9c7q-Mw-AqZ5w@armadillo.rmq.cloudamqp.com/bbcaqtmc')
+# params = pika.URLParameters(url)
+# params.socket_timeout = 10
+
+# connection = pika.BlockingConnection(params) # Connect to CloudAMQP
+# channel = connection.channel() # start a channel
+
+# reply_queue = channel.queue_declare(queue='', exclusive=True)
+
+# channel.basic_consume(queue=reply_queue.method.queue, auto_ack=True,
+#     on_message_callback=callback_doctor_app)
+
+# channel.queue_declare(queue='request-queue')
+
+
 # Initialize Chat Messages
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -169,7 +194,7 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
                     {"role": m["role"], "content": m["content"]}
                     for m in st.session_state.messages
                 ],
-                temperature=0.2,  # Set temperature
+                temperature=0.1,  # Set temperature
                 max_tokens=2048,  # Set max tokens
                 stream=True,
             ):
@@ -183,6 +208,7 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
     
     # Append assistant's response to messages
     st.session_state.messages.append({"role": "assistant", "content": full_response})
+    
 
     if 'tôi đã thu thập đủ thông tin' in full_response.lower():
         st.markdown("Tôi đang xử lý và gửi thông tin tới cho bác sĩ.")
@@ -200,12 +226,41 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
             # st.status("Completed!").update("Response generated.")
         
         st.markdown("Đây là một số thông tin mà tôi đã tổng hợp\n" + st.session_state.summary)
+
+        # print(f"Sending Request: {st.session_state.sessionId}")
+        # channel.basic_publish('', routing_key='request-queue', properties=pika.BasicProperties(
+        #     reply_to=reply_queue.method.queue,
+        #     correlation_id=st.session_state.sessionId
+        # ), body=st.session_state.summary)
+
+        # print("Starting Client")
+        # channel.start_consuming()
+
+        with st.status("Đang gửi tới bác sĩ để chẩn đoán ...", expanded=True) as status:
+            url = "http://localhost:3000/doctor"
+            payload = json.dumps({
+                "summary": "Tôi là người trưởng thành và có những triệu chứng nuốt nước bọt thấy đau, sờ vào cổ thấy nóng nhẹ, có chút đờm. Bạn có thể giúp tôi kê đơn thuốc không?"
+            })
+            headers = {
+                'Content-Type': 'application/json'
+            }
+
+            response = requests.request("POST", url, headers=headers, data=payload)
+
+            doctor_response = 'Đơn thuốc của bác sĩ:' + response.json()['data']['response']['response']
+            # Update st.status to show that the task is complete
+            status.update(label="Complete!", state="complete", expanded=False)
+            # st.status("Completed!").update("Response generated.")
+
+        # print('Đơn thuốc của bác sĩ:', doctor_response)
+
+        st.markdown(doctor_response)
         
-    state = {
-        'sessionId': st.session_state.sessionId,
-        'messages': st.session_state.messages,
-        'summary': st.session_state.summary
-    }
+    # state = {
+    #     'sessionId': st.session_state.sessionId,
+    #     'messages': st.session_state.messages,
+    #     'summary': st.session_state.summary
+    # }
     
     # with open(f'users/{st.session_state.sessionId}.json', 'w', encoding='utf-8') as f:
     #     json.dump(state, f, ensure_ascii=False, indent=4)
