@@ -7,6 +7,8 @@ Hãy tóm tắt những thông tin quan trọng từ trong cuộc hội thoại 
 6. "Thuốc hiện tại"
 7. "Dị ứng"
 
+Hãy suy nghĩ từng bước và phân loại kĩ càng.
+
 Đoạn hội thoại:
 ```
 {history_context}
