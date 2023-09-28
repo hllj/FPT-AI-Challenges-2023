@@ -12,7 +12,7 @@ Hãy tóm tắt những thông tin quan trọng từ trong cuộc hội thoại 
 7. "Thuốc hiện tại":
 8. "Dị ứng":
 
-Hãy suy nghĩ từng bước và đưa ra các thông tin và phân loại cẩn thận.
+Hãy suy nghĩ từng bước, đưa ra các thông tin và phân loại cẩn thận.
 
 Đoạn hội thoại:
 ```

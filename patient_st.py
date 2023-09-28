@@ -28,13 +28,13 @@ def get_summary(history_context):
     summary = response.choices[0].message.content
     return summary
 
-def click_button_session(sessionId):
-    f = open(f"users/{sessionId}.json", 'r')
-    state = json.load(f)
-    f.close()
-    st.session_state.messages = state['messages']
-    st.session_state.sessionId = state['sessionId']
-    st.session_state.summary = state['summary']
+# def click_button_session(sessionId):
+#     f = open(f"users/{sessionId}.json", 'r')
+#     state = json.load(f)
+#     f.close()
+#     st.session_state.messages = state['messages']
+#     st.session_state.sessionId = state['sessionId']
+#     st.session_state.summary = state['summary']
 
 if 'sessionId' not in st.session_state:
     st.session_state.sessionId = str(uuid.uuid4())
@@ -89,14 +89,21 @@ if st.sidebar.button(":arrows_counterclockwise: Làm mới"):
     st.session_state.messages.append({"role": "system", "content": system_text})
     st.session_state.summary = ""
     full_response = ""
+    
+    st.session_state.doctor = {
+        "seen": False,
+        "prescription" : None
+    }
+    with open(f'doctors/{st.session_state.sessionId}.json', 'w', encoding='utf-8') as f:
+        json.dump(st.session_state.doctor, f, ensure_ascii=False, indent=4)
 
-st.sidebar.subheader("Các đoạn chat")
+# st.sidebar.subheader("Các đoạn chat")
 
-path_sessions = glob.glob("users/*.json")
+# path_sessions = glob.glob("users/*.json")
 
-for path_session in path_sessions:
-    sessionId = path_session.split('/')[1].split('.')[0]
-    st.sidebar.button(f"{sessionId}", on_click=click_button_session, args=(sessionId,))
+# for path_session in path_sessions:
+#     sessionId = path_session.split('/')[1].split('.')[0]
+#     st.sidebar.button(f"{sessionId}", on_click=click_button_session, args=(sessionId,))
 
 # Initialize Chat Messages
 if "messages" not in st.session_state:
@@ -131,7 +138,9 @@ def get_doctor_notification(sessionId):
 for message in st.session_state.messages:
     if message["role"] != "system":
         with st.chat_message(message["role"]):
-            st.markdown(message["content"]) 
+            st.markdown(message["content"])
+
+
 
 # User Input and AI Response
 if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
@@ -142,7 +151,7 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
     print('chat', st.session_state.messages)
     
     seen, prescription = get_doctor_notification(st.session_state.sessionId)
-    
+        
     if seen != st.session_state.doctor['seen']:
         st.info('Bác sĩ đã tham gia vào đoạn chat', icon="ℹ️")
         st.session_state.doctor['seen'] = seen
@@ -150,7 +159,7 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
     if prescription != st.session_state.doctor['prescription'] and prescription != '':
         st.session_state.messages.append({"role": "doctor", "content": prescription})
         st.session_state.doctor['prescription'] = prescription
-
+    
     # Assistant Message
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
@@ -192,8 +201,9 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
             # Update st.status to show that the task is complete
             status.update(label="Complete!", state="complete", expanded=False)
             # st.status("Completed!").update("Response generated.")
-        
-        st.markdown("Đây là một số thông tin mà tôi đã tổng hợp\n" + st.session_state.summary)
+        st.session_state.messages.append({'role': 'assistant', 'content': st.session_state.summary})
+        with st.chat_message("assistant"):
+            st.markdown("Đây là một số thông tin mà tôi đã tổng hợp\n" + st.session_state.summary)
         
     state = {
         'sessionId': st.session_state.sessionId,
@@ -203,4 +213,5 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
     
     with open(f'users/{st.session_state.sessionId}.json', 'w', encoding='utf-8') as f:
         json.dump(state, f, ensure_ascii=False, indent=4)
+        
         
