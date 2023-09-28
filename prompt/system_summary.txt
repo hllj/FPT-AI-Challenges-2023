@@ -11,8 +11,6 @@ Hãy tóm tắt những thông tin quan trọng trong cuộc hội thoại sau t
 6. "Dị ứng"
 Hãy suy nghĩ từng bước và phân loại kĩ càng.
 
-Hãy suy nghĩ từng bước và phân loại kĩ càng.
-
 Đoạn hội thoại:
 ```
 {history_context}
