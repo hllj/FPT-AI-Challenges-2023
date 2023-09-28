@@ -1,14 +1,16 @@
 Hãy tóm tắt những thông tin quan trọng trong cuộc hội thoại sau theo các mục sau. Chỉ lấy những từ quan trọng.
-1. "Nhóm bệnh nhân": Chia thành 4 nhóm chính (Chỉ chọn 1 trong 4)
+1. "Tuổi":
+2. "Giới tính":
+3. "Nhóm bệnh nhân": Chia thành 4 nhóm chính (Chỉ chọn 1 trong 4)
 - `Người trưởng thành bình thường`
 - `Người già`
 - `Trẻ em`
 - `Phụ nữ có thai` <Nếu có thai>
-2. "Triệu chứng": <Chọn lọc những từ ngữ quan trọng miêu tả triệu chứng của bệnh nhân. Đây là phần quan trọng nhất hãy tập trung.>
-3. "Khởi phát"
-4. "Bệnh đi kèm"
-5. "Thuốc hiện tại"
-6. "Dị ứng"
+4. "Triệu chứng": <Chọn lọc những từ ngữ quan trọng nổi bật miêu tả đầy đủ triệu chứng của bệnh nhân. Đây là phần quan trọng nhất hãy tập trung.>
+5. "Khởi phát"
+6. "Bệnh đi kèm"
+7. "Thuốc hiện tại"
+8. "Dị ứng"
 Hãy suy nghĩ từng bước và phân loại kĩ càng.
 
 Đoạn hội thoại:
