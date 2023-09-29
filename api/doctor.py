@@ -12,17 +12,17 @@ from langchain.chat_models import ChatOpenAI
 from store_mongodb import StorageMongoDB
 
 temperature = 0 # It can be range from (0-1) as openai
-max_tokens = 512 # token limit
+max_tokens = 1024 # token limit
 
 index = build_index()
 
 #Inserting Prompt Template
 PROMPT_TEMPLATE = (
-        "Đây là thông tin về bối cảnh bệnh:"
+        "Bạn là dược sĩ tại nhà thuốc. Dưới đây là thông tin cụ thể về những đơn thuốc tham khảo dựa trên các triệu chứng:"
         "\n-----------------------------\n"
         "{context_str}"
         "\n-----------------------------\n"
-        "Hãy trả lời câu hỏi sau đây bằng cách đưa ra 1 đơn thuốc tham khảo dựa trên thông tin về bối cảnh bệnh:{query_str} \n"
+        "Hãy trả lời câu hỏi sau đây bằng cách đưa ra những đơn thuốc tham khảo dựa trên thông tin được cung cấp phía trên:{query_str} \n"
     )
 
 QA_PROMPT = QuestionAnswerPrompt(PROMPT_TEMPLATE)
