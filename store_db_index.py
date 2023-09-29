@@ -20,7 +20,7 @@ from llama_index import SimpleDirectoryReader
 import glob
 
 input_files = []
-for file in glob.glob("data/*.txt"):
+for file in glob.glob("data/hubduoc/*.txt"):
     input_files.append(file)
 
 print(input_files)
@@ -28,17 +28,19 @@ reader = SimpleDirectoryReader(input_files=input_files)
 
 # # Load the data from the text file
 documents = reader.load_data()
-# import re
-# regex = r"Triệu chứng:\s*(.*?)\n\s*----------";
+import re
+regex = r"Triệu chứng:\s*(.*?)\n\s*----------";
 # regex2 = r"Chuẩn đoán:\s*(.*?)\n\s*----------";
 
-# for d,b in zip(documents,input_files):
-#   # print(d.text)
-#   match = re.search(regex, d.text, re.DOTALL)
-#   symptoms = re.sub(r"[\n]*", "", match.group(1))
-#   match2 = re.search(regex2, d.text, re.DOTALL)
-#   diagnose = re.sub(r"[\n]*", "", match2.group(1))
-#   d.metadata = {"Triệu chứng": symptoms,"Chuẩn đoán": diagnose}
+for d,b in zip(documents,input_files):    
+    #print(b.split("/")[-1].split(".")[0].split("-")[-1])
+    info = b.split("/")[-1].split(".")[0].split("-")[-1]
+    match = re.search(regex, d.text, re.DOTALL)
+    symptoms = re.sub(r"[\n]*", "", match.group(1))
+    #   match2 = re.search(regex2, d.text, re.DOTALL)
+    #   diagnose = re.sub(r"[\n]*", "", match2.group(1))
+    #   d.metadata = {"Triệu chứng": symptoms,"Chuẩn đoán": diagnose}
+    d.metadata = {"Triệu chứng": symptoms,"Nhóm bệnh nhân": info}
 
 # # Initialize LLM and Embedding models
 llm_predictor_chat = LLMPredictor(llm=ChatOpenAI(temperature=0, model_name="gpt-3.5-turbo"))

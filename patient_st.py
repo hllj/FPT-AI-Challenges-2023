@@ -7,38 +7,12 @@ import requests
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-# import pika
-# import uuid
-# import os, time
-# import json
-# Get content
-def open_file(filepath):
-    with open(filepath, 'r', encoding='utf-8') as infile:
-        return infile.read()
-    
-def get_summary(history_context):
-    prompt = open_file('prompt/system_summary.txt').format(history_context=history_context)
-    # DEBUG
-    # print("Summary", prompt)
-    response = openai.ChatCompletion.create(
-        model='gpt-3.5-turbo',  # Use the selected model name
-        messages=[
-            {"role": "system", "content": prompt}
-        ],
-        temperature=0.0,  # Set temperature
-        max_tokens=2048,  # Set max tokens
-        stream=False,
-    )
-    summary = response.choices[0].message.content
-    return summary
+import pika
+import uuid
+import os
+import json
+from utils import open_file,get_summary
 
-# def click_button_session(sessionId):
-#     f = open(f"users/{sessionId}.json", 'r')
-#     state = json.load(f)
-#     f.close()
-#     st.session_state.messages = state['messages']
-#     st.session_state.sessionId = state['sessionId']
-#     st.session_state.summary = state['summary']
 
 if 'sessionId' not in st.session_state:
     st.session_state.sessionId = str(uuid.uuid4())
@@ -68,36 +42,41 @@ st.sidebar.subheader("Mô tả")
 st.sidebar.write("Đây là một trợ lý y tế ảo giúp kết nối người dùng và dược sĩ\
     giúp người dùng có thể được điều trị các bệnh thông thường từ xa")
 
-# openai.api_key = st.secrets["OPENAI_API_KEY"]
 from dotenv import load_dotenv
 import os
 load_dotenv()
 openai.api_key = os.environ.get('OPENAI_API_KEY')
 
 system_text = open_file('prompt/system_patient.txt')
-# # Initialize RabbitMQ
+# Initialize RabbitMQ
 
-# def callback_doctor_app(ch, method, properties, body):
-#     txt = body.decode("utf-8")
-#     st.markdown("Thông tin cuối cùng\n" + txt)
-#     # return body
+def callback_doctor_app(ch, method, properties, body):
+    prescription = body.decode("utf-8")
+    st.markdown("Đơn thuốc của bác sĩ\n" + prescription)   
+    st.status.update(label="Complete!", state="complete", expanded=False)   
+    state = {
+        'sessionId': st.session_state.sessionId,
+        'prescription': prescription,
+    }   
+    with open(f'doctors/{st.session_state.sessionId}.json', 'w', encoding='utf-8') as f:
+        json.dump(state, f, ensure_ascii=False, indent=4)
 
-# url = os.environ.get('CLOUDAMQP_URL', 'amqp://bbcaqtmc:tX2Nex9rE8bJsrFNjvr9c7q-Mw-AqZ5w@armadillo.rmq.cloudamqp.com/bbcaqtmc')
-# params = pika.URLParameters(url)
-# params.socket_timeout = 10
 
-# connection = pika.BlockingConnection(params) # Connect to CloudAMQP
-# channel = connection.channel() # start a channel
+url = os.environ.get('CLOUDAMQP_URL', 'amqp://bbcaqtmc:tX2Nex9rE8bJsrFNjvr9c7q-Mw-AqZ5w@armadillo.rmq.cloudamqp.com/bbcaqtmc')
+params = pika.URLParameters(url)
+params.socket_timeout = 10
 
-# reply_queue = channel.queue_declare(queue='', exclusive=True)
+connection = pika.BlockingConnection(params) # Connect to CloudAMQP
+channel = connection.channel() # start a channel
 
-# channel.basic_consume(queue=reply_queue.method.queue, auto_ack=True,
-#     on_message_callback=callback_doctor_app)
+reply_queue = channel.queue_declare(queue='', exclusive=True)
 
-# channel.queue_declare(queue='request-queue')
+channel.basic_consume(queue=reply_queue.method.queue, auto_ack=True,
+    on_message_callback=callback_doctor_app)
+
+channel.queue_declare(queue='request-queue')
 
 # CHAT MODEL
-
 st.sidebar.subheader("Làm mới cuộc trò chuyện")
 # Reset Button
 if st.sidebar.button(":arrows_counterclockwise: Làm mới"):
@@ -118,42 +97,15 @@ if st.sidebar.button(":arrows_counterclockwise: Làm mới"):
     st.session_state.summary = ""
     full_response = ""
 
-# st.sidebar.subheader("Các đoạn chat")
-
-# path_sessions = glob.glob("users/*.json")
-
-# for path_session in path_sessions:
-#     sessionId = path_session.split('/')[1].split('.')[0]
-#     st.sidebar.button(f"{sessionId}", on_click=click_button_session, args=(sessionId,))
-
 # Initialize Chat Messages
 if "messages" not in st.session_state:
     st.session_state.messages = []
     # Optional
     st.session_state.messages.append({"role": "system", "content": system_text})
     st.session_state.summary = ""
-    
-if "doctor" not in st.session_state:
-    st.session_state.doctor = {
-        "seen": False,
-        "prescription" : None
-    }
-    with open(f'doctors/{st.session_state.sessionId}.json', 'w', encoding='utf-8') as f:
-        json.dump(st.session_state.doctor, f, ensure_ascii=False, indent=4)
-
 
 # Initialize full_response outside the user input check
 full_response = ""
-
-# def get_doctor_notification(sessionId):
-#     f = open(f"doctors/{sessionId}.json", 'r')
-#     doctor_state = json.load(f)
-#     f.close()
-    
-#     seen = doctor_state['seen']
-#     prescription = doctor_state['prescription']
-    
-#     return seen, prescription
 
 # Display Chat History
 for message in st.session_state.messages:
@@ -161,27 +113,13 @@ for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-
-
 # User Input and AI Response
 if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
     # User Message
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
-    # DEBUG
-    # print('chat', st.session_state.messages)
     
-    # seen, prescription = get_doctor_notification(st.session_state.sessionId)
-    
-    # if seen != st.session_state.doctor['seen']:
-    #     st.info('Bác sĩ đã tham gia vào đoạn chat', icon="ℹ️")
-    #     st.session_state.doctor['seen'] = seen
-        
-    # if prescription != st.session_state.doctor['prescription'] and prescription != '':
-    #     st.session_state.messages.append({"role": "doctor", "content": prescription})
-    #     st.session_state.doctor['prescription'] = prescription
-
     # Assistant Message
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
@@ -195,7 +133,7 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
                     for m in st.session_state.messages
                 ],
                 temperature=0.1,  # Set temperature
-                max_tokens=2048,  # Set max tokens
+                max_tokens=1024,  # Set max tokens
                 stream=True,
             ):
                 full_response += response.choices[0].delta.get("content", "")
@@ -209,7 +147,6 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
     # Append assistant's response to messages
     st.session_state.messages.append({"role": "assistant", "content": full_response})
     
-
     if 'tôi đã thu thập đủ thông tin' in full_response.lower():
         st.markdown("Tôi đang xử lý và gửi thông tin tới cho bác sĩ.")
         history_context = "\n"
@@ -227,33 +164,23 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
         
         st.markdown("Đây là một số thông tin mà tôi đã tổng hợp\n" + st.session_state.summary)
 
-        with st.status("Đang gửi tới bác sĩ để chẩn đoán ...", expanded=True) as status:
-            url = "http://localhost:8001/doctor"
-            payload = json.dumps({
-                "summary": st.session_state.summary
-            })
-            headers = {
-                'Content-Type': 'application/json'
-            }
+        # RabbitMQ Integration
+        print(f'summary: {st.session_state.summary}')
+        st.info('Bác sĩ đã tham gia vào đoạn chat', icon="ℹ️")
+        channel.basic_publish('', routing_key='request-queue', properties=pika.BasicProperties(
+            reply_to=reply_queue.method.queue,
+            correlation_id=st.session_state.sessionId
+        ), body=json.dumps(st.session_state.summary))
 
-            response = requests.request("POST", url, headers=headers, data=payload)
-
-            doctor_response = 'Đơn thuốc của bác sĩ:' + response.json()['data']['response']['response']
-            # Update st.status to show that the task is complete
-            status.update(label="Complete!", state="complete", expanded=False)
-            # st.status("Completed!").update("Response generated.")
-
-        print('Đơn thuốc của bác sĩ:', doctor_response)
-
-        st.markdown(doctor_response)
-        
-    # state = {
-    #     'sessionId': st.session_state.sessionId,
-    #     'messages': st.session_state.messages,
-    #     'summary': st.session_state.summary
-    # }
+        channel.start_consuming()
+      
+    state = {
+        'sessionId': st.session_state.sessionId,
+        'messages': st.session_state.messages,
+        'summary': st.session_state.summary
+    }
     
-    # with open(f'users/{st.session_state.sessionId}.json', 'w', encoding='utf-8') as f:
-    #     json.dump(state, f, ensure_ascii=False, indent=4)
+    with open(f'users/{st.session_state.sessionId}.json', 'w', encoding='utf-8') as f:
+        json.dump(state, f, ensure_ascii=False, indent=4)
         
         
