@@ -23,7 +23,6 @@ def click_button_user_session(sessionId):
     st.session_state.sessionId = state['sessionId']
     st.session_state.summary = state['summary']
     st.session_state.messages = state['messages']
-    st.session_state.messages.append({'role': 'summary', 'content': st.session_state.summary})
     
     doctor_state = {
         'seen': True,
@@ -44,6 +43,7 @@ def click_button_suggestion(summary):
     response = requests.request("POST", url, headers=headers, data=payload)
 
     doctor_response = response.json()['data']['response']['response']
+    st.session_state.prescription = doctor_response
     st.session_state.messages.append({'role': 'suggestion', 'content': doctor_response})
     
 def click_send_prescription(sessionId, prescription):
@@ -53,6 +53,22 @@ def click_send_prescription(sessionId, prescription):
     }
     with open(f'doctors/{sessionId}.json', 'w', encoding='utf-8') as f:
         json.dump(doctor_state, f, ensure_ascii=False, indent=4)
+
+def click_send_prescription_to_storage(sessionId, prescription):
+    print('check', 'click_send_prescription_to_storage')
+    url = "http://0.0.0.0:8001/storage"
+
+    payload = json.dumps({
+        "text": prescription
+    })
+    headers = {
+        'Content-Type': 'application/json'
+    }
+
+    response = requests.request("GET", url, headers=headers, data=payload)
+    actives = response.json()['data']['response']
+    st.session_state.actives = actives
+    st.session_state.messages.append({'role': 'assistant', 'content': 'Đây là một số thuốc hiện có trong kho mà tôi tìm được!'})
 
 # Custom Streamlit app title and icon
 st.set_page_config(
@@ -95,6 +111,10 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
     # Optional
     st.session_state.summary = ""
+    st.session_state.prescription = ""
+    st.session_state.actives = []
+    st.session_state.drug_choose = {}
+    st.session_state.final = ""
 
 # Initialize full_response outside the user input check
 full_response = ""
@@ -105,8 +125,44 @@ for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             if message['content'] != '':
                 st.markdown(message["content"])
-        if message['role'] == 'summary' and message['content'] != '':
-            st.button('Đưa ra đơn thuốc tham khảo', on_click=click_button_suggestion, args=(st.session_state.summary,))
+        
+        if message['content'] == st.session_state.summary and st.session_state.summary != '':
+            st.button(label='Đưa ra đơn thuốc tham khảo', key="summary_button", on_click=click_button_suggestion, args=(st.session_state.summary,))
             
-        if message['role'] == 'suggestion':
-            st.button('Gửi đơn thuốc cho bệnh nhân', on_click=click_send_prescription, args=(st.session_state.sessionId, message['content']))
+        if message['role'] == 'suggestion' and message['content'] == st.session_state.prescription:
+            st.button('Tìm thuốc', on_click=click_send_prescription_to_storage, args=(st.session_state.sessionId, st.session_state.prescription))
+        
+        if message['content'] == "Đây là một số thuốc hiện có trong kho mà tôi tìm được!" and len(st.session_state.actives) > 0:
+            with st.form("Hãy chọn thuốc từ các hoạt chất"):
+                drug_choose = {}
+                for active in st.session_state.actives:
+                    with st.container():
+                        st.title('Hoạt chất: ' + active['active'])
+                        for drug in active['drugs']:
+                            col1, col2, col3 = st.columns([4, 4, 4])
+                            with col1:
+                                st.markdown(drug['Biệt dược'])
+                            with col2:
+                                st.markdown("Số lượng hiện còn: " + str(drug['Số lượng']))
+                            with col3:
+                                checkbox_value = st.checkbox(label=drug['_id'], key=drug['_id'], label_visibility="hidden")
+                                if checkbox_value == True:
+                                    drug_choose[active['active']] = drug['Biệt dược']
+                            st.divider()
+                submitted = st.form_submit_button("Lựa chọn")
+                if submitted:
+                    st.session_state.drug_choose = drug_choose
+                    text = "Bạn đã chọn\n\n"
+                    final_prescription = st.session_state.prescription
+                    for active in drug_choose:
+                        text += f"- Hoạt chất {active}: " + drug_choose[active] + "\n\n"
+                        final_prescription = final_prescription.replace(active, drug_choose[active])
+                    st.session_state.final = final_prescription
+                    st.session_state.messages.append({"role": "assistant", "content": text})
+                    
+                    st.session_state.messages.append({'role': 'final', 'content': "Đơn thuốc cuối cùng bạn lựa chọn\n\n" + st.session_state.final})
+                    
+        if message['role'] == 'final':
+            st.markdown('Bạn có muốn gửi đơn thuốc cho bệnh nhân không ?')
+            st.button('Gửi đơn thuốc cho bệnh nhân', on_click=click_send_prescription, args=(st.session_state.sessionId, st.session_state.final))
+                        

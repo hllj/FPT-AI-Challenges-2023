@@ -4,13 +4,23 @@ Quy Nhon AI Challenges 2023 - Challenge 2
 # API
 
 ## Thêm OPEN_API_KEY và Cohere API KEY vào file .env
+
 OPEN_API_KEY=
+
 COHERE_API_KEY=
 
 ## Install libraries
 
 ```bash
 pip install -r requirements.txt
+```
+
+# Storage
+
+## Import data hoạt chất và tpcn vào mongoDB
+
+```bash
+python store_mongodb.py
 ```
 
 ## Start API
