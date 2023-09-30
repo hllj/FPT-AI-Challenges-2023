@@ -13,7 +13,11 @@ BỆNH ĐAU MẮT ĐỎ
 + Đơn 1:
 1. Thuốc kháng sinh Macrolid: Clarithromycin 250mg 2 viên/ 2 lần (Sau ăn SÁNG, CHIỀU)
 2. Thuốc kháng viêm: Alpha Chymotrypsine 5mg  2 viên/ 2 lần (Sau ăn SÁNG, CHIỀU)
+<<<<<<< HEAD
 3. Thuốc giảm đau hạ sốt: Paracetamol (dạng sủi) 500mg  4 viên/ 2 lần (Khi có sốt, mỗi lần uống cách nhau 4 tiếng)
+=======
+3. Thuốc giảm đau hạ sốt (dạng sủi): Paracetamol 500mg  4 viên/ 2 lần (Khi có sốt, mỗi lần uống cách nhau 4 tiếng)
+>>>>>>> fe9726e0e33b0fae44761c9a4de767423ec1babe
 4. Nước muối rửa mắt: Sodium Chloride 0,9%
 5. Thuốc nhỏ mắt: Levofloxacine nhỏ mắt
 6. Thuốc bổ: Omega 3 2 viên/ 2 lần (Sau ăn SÁNG, CHIỀU)
@@ -22,7 +26,11 @@ BỆNH ĐAU MẮT ĐỎ
 + Đơn 2;
 1. Thuốc kháng sinh: Cefixime 100mg 2 viên/ 2 lần (Sau ăn SÁNG, CHIỀU)
 2. Thuốc kháng viêm: Alpha Chymotrypsine 5mg  2 viên/ 2 lần (Sau ăn SÁNG, CHIỀU)
+<<<<<<< HEAD
 3. Thuốc giảm đau hạ sốt: Paracetamol (dạng viên) 500mg  2 viên/ 2 lần (Khi có sốt, mỗi lần uống cách nhau 4 tiếng)
+=======
+3. Thuốc giảm đau hạ sốt (dạng viên): Paracetamol 500mg  2 viên/ 2 lần (Khi có sốt, mỗi lần uống cách nhau 4 tiếng)
+>>>>>>> fe9726e0e33b0fae44761c9a4de767423ec1babe
 4. Nước muối rửa mắt: Sodium Chloride 0,9%
 5. Thuốc nhỏ mắt: Tobramycine nhỏ mắt
 6. Thuốc bổ: Omega 3 2 viên/ 2 lần (Sau ăn SÁNG, CHIỀU)

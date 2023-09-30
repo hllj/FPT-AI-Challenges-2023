@@ -1,18 +1,13 @@
 # Library
-import glob
 import json
 import uuid
 import openai
-import requests
 import streamlit as st
-import pandas as pd
-from datetime import datetime
 import pika
 import uuid
 import os
 import json
 from utils import open_file,get_summary
-
 
 if 'sessionId' not in st.session_state:
     st.session_state.sessionId = str(uuid.uuid4())
@@ -43,7 +38,6 @@ st.sidebar.write("Đây là một trợ lý y tế ảo giúp kết nối ngư�
     giúp người dùng có thể được điều trị các bệnh thông thường từ xa")
 
 from dotenv import load_dotenv
-import os
 load_dotenv()
 openai.api_key = os.environ.get('OPENAI_API_KEY')
 
@@ -52,8 +46,8 @@ system_text = open_file('prompt/system_patient.txt')
 
 def callback_doctor_app(ch, method, properties, body):
     prescription = body.decode("utf-8")
-    st.markdown("Đơn thuốc của bác sĩ\n" + prescription)   
-    st.status.update(label="Complete!", state="complete", expanded=False)   
+    st.markdown("Đơn thuốc của bác sĩ \n" + prescription)   
+    # st.status.update(label="Complete!", state="complete", expanded=False)   
     state = {
         'sessionId': st.session_state.sessionId,
         'prescription': prescription,
@@ -170,7 +164,7 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
         channel.basic_publish('', routing_key='request-queue', properties=pika.BasicProperties(
             reply_to=reply_queue.method.queue,
             correlation_id=st.session_state.sessionId
-        ), body=json.dumps(st.session_state.summary))
+        ), body=st.session_state.summary)
 
         channel.start_consuming()
       

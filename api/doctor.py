@@ -29,7 +29,8 @@ QA_PROMPT = QuestionAnswerPrompt(PROMPT_TEMPLATE)
 
 # Build index and query engine
 query_engine = index.as_query_engine(text_qa_template=QA_PROMPT,llm=ChatOpenAI(temperature=temperature,model="gpt-3.5-turbo",max_tokens=max_tokens))
-storage_db = StorageMongoDB(server=os.environ['MONGODB_SERVER'], port=int(os.environ['MONGODB_PORT']), db=os.environ['MONGODB_DB'])
+
+storage_db = StorageMongoDB(server="localhost", port=int(27017), db="storage")
 
 app = FastAPI()
 

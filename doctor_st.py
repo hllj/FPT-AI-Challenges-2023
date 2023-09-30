@@ -5,137 +5,55 @@ import uuid
 import openai
 import requests
 import streamlit as st
-import pandas as pd
-from datetime import datetime
+import pika
+import uuid
+import os
+import json
+import time 
+from dotenv import load_dotenv
+load_dotenv()
 
-if 'sessionId' not in st.session_state:
-    st.session_state.sessionId =  str(uuid.uuid4())
+def click_send_prescription( prescription,properties):
+    print(prescription)
+    channel.basic_publish('', routing_key=properties.reply_to, body= prescription)
 
-# Get content
-def open_file(filepath):
-    with open(filepath, 'r', encoding='utf-8') as infile:
-        return infile.read()
-    
-def click_button_user_session(sessionId):
-    f = open(f"users/{sessionId}.json", 'r')
-    state = json.load(f)
-    f.close()
-    st.session_state.sessionId = state['sessionId']
-    st.session_state.summary = state['summary']
-    st.session_state.messages = state['messages']
-    
-    doctor_state = {
-        'seen': True,
-        'prescription': None
-    }
-    with open(f'doctors/{sessionId}.json', 'w', encoding='utf-8') as f:
-        json.dump(doctor_state, f, ensure_ascii=False, indent=4)
+openai.api_key = os.environ.get('OPENAI_API_KEY')
 
-def click_button_suggestion(summary):
-    url = "http://0.0.0.0:8001/doctor"
+def on_request_message_received(channel, method, properties, body):
+    summary_info = body.decode("utf-8")
+    sessionId = properties.correlation_id
+    if summary_info:
+        st.info(summary_info, icon="ℹ️")
+        st.button(label='Đưa ra đơn thuốc tham khảo', key="summary_button", on_click=click_button_suggestion, args=(summary_info,properties,))
+
+def click_button_suggestion(summary_info,properties):
+    url = "http://localhost:3000/doctor"
     payload = json.dumps({
-        "summary": summary
+        "summary": summary_info
     })
     headers = {
         'Content-Type': 'application/json'
     }
 
     response = requests.request("POST", url, headers=headers, data=payload)
+    prescription = response.json()['data']['response']['response']
+    if prescription:
+        url = "http://localhost:3000/storage"
 
-    doctor_response = response.json()['data']['response']['response']
-    st.session_state.prescription = doctor_response
-    st.session_state.messages.append({'role': 'suggestion', 'content': doctor_response})
-    
-def click_send_prescription(sessionId, prescription):
-    doctor_state = {
-        'seen': True,
-        'prescription': prescription
-    }
-    with open(f'doctors/{sessionId}.json', 'w', encoding='utf-8') as f:
-        json.dump(doctor_state, f, ensure_ascii=False, indent=4)
+        payload = json.dumps({
+            "text": prescription
+        })
+        headers = {
+            'Content-Type': 'application/json'
+        }
 
-def click_send_prescription_to_storage(sessionId, prescription):
-    print('check', 'click_send_prescription_to_storage')
-    url = "http://0.0.0.0:8001/storage"
+        response = requests.request("GET", url, headers=headers, data=payload)
+        actives = response.json()['data']['response']
 
-    payload = json.dumps({
-        "text": prescription
-    })
-    headers = {
-        'Content-Type': 'application/json'
-    }
-
-    response = requests.request("GET", url, headers=headers, data=payload)
-    actives = response.json()['data']['response']
-    st.session_state.actives = actives
-    st.session_state.messages.append({'role': 'assistant', 'content': 'Đây là một số thuốc hiện có trong kho mà tôi tìm được!'})
-
-# Custom Streamlit app title and icon
-st.set_page_config(
-    page_title="Hệ thống hỗ trợ bác sĩ",
-    page_icon=":robot_face:",
-)
-
-st.title("🤖 Hệ thống hỗ trợ bác sĩ")
-
-# Sidebar Configuration
-st.sidebar.title("FPT AI CHALLENGE 2023")
-
-html_code = """
-<div style="display: flex; justify-content: space-between;">
-    <img src="https://inkythuatso.com/uploads/thumbnails/800/2021/11/logo-fpt-inkythuatso-1-01-01-14-33-35.jpg" width="35%">
-    <img src="https://hackathon.quynhon.ai/QAI-QuyNhon.c9fe9a3855f9b592.png" width="65%">
-</div>
-"""
-
-st.sidebar.markdown(html_code, unsafe_allow_html=True)
-
-# Enhance the sidebar styling
-st.sidebar.subheader("Mô tả")
-st.sidebar.write("Đây là một trợ lý y tế ảo dành cho dược sĩ dễ dàng chọn các đơn thuốc cho bệnh nhân")
-
-openai.api_key = st.secrets["OPENAI_API_KEY"]
-
-# CHAT MODEL
-
-st.sidebar.subheader("Các đoạn chat")
-
-path_sessions = glob.glob("users/*.json")
-
-for path_session in path_sessions:
-    sessionId = path_session.split('/')[1].split('.')[0]
-    st.sidebar.button(f"{sessionId}", on_click=click_button_user_session, args=(sessionId,))
-
-# Initialize Chat Messages
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-    # Optional
-    st.session_state.summary = ""
-    st.session_state.prescription = ""
-    st.session_state.actives = []
-    st.session_state.drug_choose = {}
-    st.session_state.final = ""
-
-# Initialize full_response outside the user input check
-full_response = ""
-
-# Display Chat History
-for message in st.session_state.messages:
-    if message["role"] != "system":
-        with st.chat_message(message["role"]):
-            if message['content'] != '':
-                st.markdown(message["content"])
-        
-        if message['content'] == st.session_state.summary and st.session_state.summary != '':
-            st.button(label='Đưa ra đơn thuốc tham khảo', key="summary_button", on_click=click_button_suggestion, args=(st.session_state.summary,))
-            
-        if message['role'] == 'suggestion' and message['content'] == st.session_state.prescription:
-            st.button('Tìm thuốc', on_click=click_send_prescription_to_storage, args=(st.session_state.sessionId, st.session_state.prescription))
-        
-        if message['content'] == "Đây là một số thuốc hiện có trong kho mà tôi tìm được!" and len(st.session_state.actives) > 0:
+        if len(actives) > 0:
             with st.form("Hãy chọn thuốc từ các hoạt chất"):
                 drug_choose = {}
-                for active in st.session_state.actives:
+                for active in actives:
                     with st.container():
                         st.title('Hoạt chất: ' + active['active'])
                         for drug in active['drugs']:
@@ -149,20 +67,52 @@ for message in st.session_state.messages:
                                 if checkbox_value == True:
                                     drug_choose[active['active']] = drug['Biệt dược']
                             st.divider()
-                submitted = st.form_submit_button("Lựa chọn")
-                if submitted:
-                    st.session_state.drug_choose = drug_choose
-                    text = "Bạn đã chọn\n\n"
-                    final_prescription = st.session_state.prescription
-                    for active in drug_choose:
-                        text += f"- Hoạt chất {active}: " + drug_choose[active] + "\n\n"
-                        final_prescription = final_prescription.replace(active, drug_choose[active])
-                    st.session_state.final = final_prescription
-                    st.session_state.messages.append({"role": "assistant", "content": text})
+                st.form_submit_button(label='Lựa chọn', on_click=form_submit, args=(drug_choose,prescription,properties,))              
                     
-                    st.session_state.messages.append({'role': 'final', 'content': "Đơn thuốc cuối cùng bạn lựa chọn\n\n" + st.session_state.final})
-                    
-        if message['role'] == 'final':
-            st.markdown('Bạn có muốn gửi đơn thuốc cho bệnh nhân không ?')
-            st.button('Gửi đơn thuốc cho bệnh nhân', on_click=click_send_prescription, args=(st.session_state.sessionId, st.session_state.final))
-                        
+def form_submit(drug_choose,prescription,properties):
+    text = "Bạn đã chọn\n\n"
+    final_prescription = prescription
+    for active in drug_choose:
+        text += f"- Hoạt chất {active}: " + drug_choose[active] + "\n\n"
+        final_prescription = final_prescription.replace(active, drug_choose[active])
+    final_prescription = final_prescription
+    if final_prescription:
+        st.markdown(final_prescription)
+        st.button('Gửi đơn thuốc cho bệnh nhân', on_click=click_send_prescription, args=(final_prescription,properties,))
+
+if __name__ == "__main__":
+    # Custom Streamlit app title and icon
+    st.set_page_config(
+        page_title="Hệ thống hỗ trợ bác sĩ",
+        page_icon=":robot_face:",
+    )
+
+    st.title("🤖 Hệ thống hỗ trợ bác sĩ")
+
+    # Sidebar Configuration
+    st.sidebar.title("FPT AI CHALLENGE 2023")
+
+    html_code = """
+    <div style="display: flex; justify-content: space-between;">
+        <img src="https://inkythuatso.com/uploads/thumbnails/800/2021/11/logo-fpt-inkythuatso-1-01-01-14-33-35.jpg" width="35%">
+        <img src="https://hackathon.quynhon.ai/QAI-QuyNhon.c9fe9a3855f9b592.png" width="65%">
+    </div>
+    """
+
+    st.sidebar.markdown(html_code, unsafe_allow_html=True)
+
+    # Enhance the sidebar styling
+    st.sidebar.subheader("Mô tả")
+    st.sidebar.write("Đây là một trợ lý y tế ảo dành cho dược sĩ dễ dàng chọn các đơn thuốc cho bệnh nhân")
+
+    # Integrate RabbitMQ
+
+    url = os.environ.get('CLOUDAMQP_URL', 'amqp://bbcaqtmc:tX2Nex9rE8bJsrFNjvr9c7q-Mw-AqZ5w@armadillo.rmq.cloudamqp.com/bbcaqtmc')
+    params = pika.URLParameters(url)
+    params.socket_timeout = 10
+    connection = pika.BlockingConnection(params) # Connect to CloudAMQP
+    channel = connection.channel() # start a channel
+    channel.queue_declare(queue='request-queue')
+    channel.basic_consume(queue='request-queue', auto_ack=True,
+        on_message_callback=on_request_message_received)
+    channel.start_consuming()
