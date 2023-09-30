@@ -75,7 +75,7 @@
         ],
         "Biệt dược": "Viên nén ngậm Star Cough Relief OPV giảm tạm thời triệu chứng ho (16 viên)",
         "Mô tả ngắn": "Dạng bào chế,Viên ngậm dưới lưỡi\nQuy cách,Hộp 2 vỉ x 8 viên\nThành phần,Dextromethorphan\nChỉ định,Viêm họng\nXuất xứ thương hiệu,Việt Nam\nNhà sản xuất,OPV\nSố đăng ký,VD-22503-15\nThuốc cần kê toa,Không\nMô tả ngắn,Thuốc ngậm ho Star Cough Relief\n",
-        "Hoạt chất": "Dextromethorphan",
+        "Hoạt chất": "Dextromethorphan (dạng viên)",
         "Số lượng": 3700,
         "Liều dùng": null
     },
@@ -319,7 +319,7 @@
         ],
         "Biệt dược": "Thuốc Naphazolin 0.05% nhỏ mũi Danapha giảm nghẹt mũi, sung huyết mũi (chai 5ml)",
         "Mô tả ngắn": "Danh mục,Thuốc chống sung huyết mũi & các chế phẩm khác dùng cho mũi\nDạng bào chế,Dung dịch\nQuy cách,Hộp 1 Chai\nThành phần,Naphazoline\nXuất xứ thương hiệu,Việt Nam\nNhà sản xuất,CÔNG TY CỔ PHẦN DƯỢC DANAPHA\nSố đăng ký,VD-29627-18\nThuốc cần kê toa,Không\nMô tả ngắn,Thuốc nhỏ mũi Naphazolin 5ml là sản phẩm của Công ty Cổ phần Dược Danapha có thành phần chính là Naphazolin hydroclorid giúp làm co mạch trong những tình trạng sung huyết cấp khi viêm mũi, viêm xoang. Điều trị các triệu chứng như nghẹt mũi, sổ mũi, viêm mũi.\n",
-        "Hoạt chất": "Naphazoline",
+        "Hoạt chất": "Naphazoline nhỏ mũi",
         "Số lượng": 5100,
         "Liều dùng": "5ml"
     },
@@ -651,7 +651,7 @@
         ],
         "Biệt dược": "Thuốc Dexipharm 15mg Imexpharm điều trị triệu chứng ho (500 viên)",
         "Mô tả ngắn": "Dạng bào chế,Viên nén bao phim\nQuy cách,Hộp 500 Viên\nThành phần,Dextromethorphan\nXuất xứ thương hiệu,Việt Nam\nNhà sản xuất,IMEXPHARM\nSố đăng ký,VD-27898-17\nThuốc cần kê toa,Không\nMô tả ngắn,Dexipharm 15mg là sản phẩm của Công ty cổ phần dược phẩm Imexpharm (Việt Nam), thành phần chính là dextromethorphan hydrobromid.\n",
-        "Hoạt chất": "Dextromethorphan",
+        "Hoạt chất": "Dextromethorphan (dạng viên)",
         "Số lượng": 9800,
         "Liều dùng": "15mg"
     },
@@ -1316,7 +1316,7 @@
         ],
         "Biệt dược": "Thuốc Rodilar 15mg Mekophar điều trị ho do họng và phế quản bị kích thích (100 viên)",
         "Mô tả ngắn": "Dạng bào chế,Viên nén\nQuy cách,Hộp 10 Vỉ x 10 Viên\nThành phần,Dextromethorphan\nChỉ định,Ho khan\nChống chỉ định,Hen phế quản, Suy hô hấp cấp, Suy hô hấp mạn\nXuất xứ thương hiệu,Việt Nam\nNhà sản xuất,MEKOPHAR\nSố đăng ký,VD-32152-19\nThuốc cần kê toa,Không\nMô tả ngắn,Rodilar là sản phẩm của Công ty Cổ phần Hoá dược phẩm Mekophar có thành phần chính Dextromethorphan HBr dùng điều trị ho do họng và phế quản bị kích thích khi cảm lạnh thông thường hoặc khi hít phải chất kích thích; ho không có đờm, mạn tính.\n",
-        "Hoạt chất": "Dextromethorphan",
+        "Hoạt chất": "Dextromethorphan (dạng viên)",
         "Số lượng": 7900,
         "Liều dùng": "15mg"
     },
@@ -1915,7 +1915,7 @@
         ],
         "Biệt dược": "Thuốc Panactol 500mg Khapharco giúp giảm đau, hạ sốt (200 viên)",
         "Mô tả ngắn": "Danh mục,Thuốc giảm đau (không opioid) & hạ sốt\nDạng bào chế,Viên nén\nQuy cách,Chai 200 Viên\nThành phần,Paracetamol\nXuất xứ thương hiệu,Việt Nam\nNhà sản xuất,DP KHÁNH HÒA\nSố đăng ký,VD-18743-13\nThuốc cần kê toa,Không\nMô tả ngắn,Thuốc Panactol 500mg là sản phẩm của Dược phẩm Khánh Hoà, thành phần chính là paracetamol 500mg. Thuốc dùng để hạ sốt, giảm đau từ nhẹ đến vừa như: Giảm đau trong các chứng đau đầu, \n",
-        "Hoạt chất": "Paracetamol",
+        "Hoạt chất": "Paracetamol (dạng viên)",
         "Số lượng": 3200,
         "Liều dùng": "500mg"
     },
@@ -1971,7 +1971,7 @@
         ],
         "Biệt dược": "Thuốc hạ nhiệt và giảm đau Sara 500mg Nakorn (20 vỉ x 10 viên)",
         "Mô tả ngắn": "Dạng bào chế,Viên nén\nQuy cách,Hộp 20 Vỉ x 10 Viên\nThành phần,Paracetamol\nXuất xứ thương hiệu,Việt Nam\nNhà sản xuất,THAI NAKORN PATANA VIET NAM\nSố đăng ký,VD-26028-16\nThuốc cần kê toa,Không\nMô tả ngắn,Sara 500mg là sản phẩm của Công ty Thái Nakorn Patana, thành phần chính là paracetamol 500mg.\n",
-        "Hoạt chất": "Paracetamol",
+        "Hoạt chất": "Paracetamol (dạng viên)",
         "Số lượng": 6200,
         "Liều dùng": "500mg"
     },
@@ -2318,7 +2318,7 @@
         ],
         "Biệt dược": "Thuốc Pacemin 325mg Hataphar điều trị cảm cúm, hắt hơi, sổ mũi (50 vỉ x 10 viên)",
         "Mô tả ngắn": "Danh mục,Thuốc giảm đau (không opioid) & hạ sốt\nDạng bào chế,Viên nén\nQuy cách,Hộp 50 Vỉ x 10 Viên\nThành phần,Paracetamol\nXuất xứ thương hiệu,Việt Nam\nNhà sản xuất,HÀ TÂY\nSố đăng ký,VD-24772-16\nThuốc cần kê toa,Không\nMô tả ngắn,Pacemin của Công ty CP dược phẩm Hà Tây, có thành phần là paracetamol (325 mg), \n",
-        "Hoạt chất": "Paracetamol",
+        "Hoạt chất": "Paracetamol (dạng viên)",
         "Số lượng": 9600,
         "Liều dùng": "325mg"
     },
@@ -2617,7 +2617,7 @@
         ],
         "Biệt dược": "Thuốc Tatanol 250mg cho trẻ em Pymepharco điều trị cảm cúm, nhức đầu (30 gói x 1g)",
         "Mô tả ngắn": "Dạng bào chế,Dạng bột\nQuy cách,Hộp 30 Gói\nThành phần,Paracetamol\nChỉ định,Viêm họng\nChống chỉ định,Thiếu máu\nXuất xứ thương hiệu,Việt Nam\nNhà sản xuất,PYMEPHARCO\nSố đăng ký,VD-23227-15\nThuốc cần kê toa,Không\nMô tả ngắn,Tatanol 250mg\n",
-        "Hoạt chất": "Paracetamol",
+        "Hoạt chất": "Paracetamol (dạng sủi)",
         "Số lượng": 8000,
         "Liều dùng": "250mg"
     },
@@ -2767,9 +2767,9 @@
         ],
         "Biệt dược": "Thuốc Piantawic TV.Pharm giúp giảm đau, kháng viêm (10 vỉ x 10 viên)",
         "Mô tả ngắn": "Dạng bào chế,Viên nang\nQuy cách,Hộp 10 vỉ x 10 viên\nThành phần,Paracetamol\nChỉ định,Sốt\nChống chỉ định,Polyp mũi, Phù mạch, Suy gan, Nghiện rượu mãn tính, Suy thận\nXuất xứ thương hiệu,Việt Nam\nNhà sản xuất,Công ty cổ phần Dược phẩm TV.Pharm\nSố đăng ký,VD-25532-16\nThuốc cần kê toa,Không\nMô tả ngắn,Thuốc Piantawic được sản xuất bởi Công ty Cổ phần Dược phẩm TV.Pharm, có thành phần chính là Paracetamol và Ibuprofen. Thuốc Piantawic được chỉ định trong điều trị giảm các cơn đau cơ xương nhẹ đến trung bình như đau cổ, đau vai, đau lưng, căng cơ bắp tay hoặc bắp chân, cứng cơ cổ, viêm khớp, thấp khớp, viêm bao hoạt dịch, bong gân, viêm gân; giảm nhức đầu vì căng thẳng tinh thần, đau bụng kinh, nhức răng, đau sau nhổ răng và tiểu phẫu.\n",
-        "Hoạt chất": "Paracetamol",
+        "Hoạt chất": "Paracetamol (dạng viên)",
         "Số lượng": 6100,
-        "Liều dùng": null
+        "Liều dùng": "325mg"
     },
     {
         "url": "https://nhathuoclongchau.com.vn/thuoc/piroxicam-20mg-domesco-3x10-28378.html",
@@ -2906,9 +2906,9 @@
         ],
         "Biệt dược": "Thuốc Tatanol Ultra Pymepharco điều trị các cơn đau từ trung bình đến nặng (3 vỉ x 10 viên)",
         "Mô tả ngắn": "Dạng bào chế,Viên nén bao phim\nQuy cách,Hộp 3 vỉ x 10 viên\nThành phần,Paracetamol\nChỉ định,Viêm họng\nChống chỉ định,Suy gan\nXuất xứ thương hiệu,Việt Nam\nNhà sản xuất,PYMEPHARCO\nSố đăng ký,VD-28305-17\nThuốc cần kê toa,Có\nMô tả ngắn,Tatanol Ultra\nLưu ý,\n",
-        "Hoạt chất": "Paracetamol",
+        "Hoạt chất": "Paracetamol (dạng viên)",
         "Số lượng": 4500,
-        "Liều dùng": null
+        "Liều dùng": "500mg"
     },
     {
         "url": "https://nhathuoclongchau.com.vn/thuoc/rovas-15miu-dhg-2x8-28333.html",
@@ -3853,7 +3853,7 @@
         ],
         "Biệt dược": "Thuốc nhỏ mũi Naphazolin 0.05% Danapha điều trị nghẹt mũi, sổ mũi, viêm mũi (chai 10ml)",
         "Mô tả ngắn": "Danh mục,Thuốc chống sung huyết mũi & các chế phẩm khác dùng cho mũi\nDạng bào chế,Dung dịch\nQuy cách,Chai\nThành phần,Naphazoline\nChỉ định,Viêm mũi\nChống chỉ định,Glôcôm góc đóng nguyên phát, Bệnh tiểu đường, Suy tim, Cao huyết áp\nXuất xứ thương hiệu,Việt Nam\nNhà sản xuất,DANAPHA\nSố đăng ký,VD-29627-18\nThuốc cần kê toa,Không\nMô tả ngắn,Naphazolin 0.05% được sản xuất bởi công ty cổ phần dược Danapha, thành phần chính là naphazolin hydroclorid, là thuốc được dùng làm co mạch trong những tình trạng sung huyết cấp khi viêm mũi, viêm xoang; điều trị các triệu chứng như nghẹt mũi, số mũi, viêm mũi.\n",
-        "Hoạt chất": "Naphazoline",
+        "Hoạt chất": "Naphazoline nhỏ mũi",
         "Số lượng": 7900,
         "Liều dùng": "10ml"
     },
@@ -4107,7 +4107,7 @@
         ],
         "Biệt dược": "Siro ho Antituss Plus Mekophar điều trị cảm cúm, viêm phổi, viêm phế quản (60ml)",
         "Mô tả ngắn": "Dạng bào chế,Siro\nQuy cách,Chai\nThành phần,Dextromethorphan hydrobromid\nChỉ định,Viêm họng\nChống chỉ định,Phì đại tuyến tiền liệt, Suy thận, Loét dạ dày tá tràng, Tắc cổ bàng quang, Glaucoma góc hẹp, Tăng Natri máu\nXuất xứ thương hiệu,Việt Nam\nNhà sản xuất,MEKOPHAR\nSố đăng ký,VD-23191-15\nThuốc cần kê toa,Có\nMô tả ngắn,Sirô ho Antituss Plus được sản xuất bởi công ty cổ phần hóa – dược phẩm Mekophar, thành phần chính là dextromethorphan hydrobromide, chlorpheniramine maleate, sodium citrate dihydrate, guaifenesin (glyceryl guaiacolate), là thuốc được dùng để giảm ho do cảm lạnh, ho gà, sởi, kích thích nhẹ ở phế quản, họng hay hít phải chất kích thích và giảm ho do các viêm nhiễm đường hô hấp.\nLưu ý,\n",
-        "Hoạt chất": "Dextromethorphan",
+        "Hoạt chất": "Dextromethorphan (dạng siro)",
         "Số lượng": 4100,
         "Liều dùng": "60ml"
     },
@@ -4843,7 +4843,7 @@
         ],
         "Biệt dược": "Siro ho Atukid Quang Minh điều trị ho do cảm, viêm phế quản (60ml)",
         "Mô tả ngắn": "Dạng bào chế,Siro\nQuy cách,Chai\nThành phần,Dextromethorphan\nChỉ định,Viêm họng\nXuất xứ thương hiệu,Việt Nam\nNhà sản xuất,CÔNG TY CPTMDP QUANG MINH\nSố đăng ký,VD-23247-15\nThuốc cần kê toa,Có\nMô tả ngắn,Siro Ho Atukid Mediphar 60 ml được sản xuất bởi công ty cổ phần Thương mại Dược phẩm Quang Minh, có thành phần là dextromethorphan, clorpheniramin (\nLưu ý,\n",
-        "Hoạt chất": "Dextromethorphan",
+        "Hoạt chất": "Dextromethorphan (dạng siro)",
         "Số lượng": 1800,
         "Liều dùng": "60ml"
     },
@@ -8430,7 +8430,7 @@
         ],
         "Biệt dược": "Dung dịch uống ATersin An Thiên hỗ trợ điều trị nhiễm trùng cấp đường hô hấp (60ml)",
         "Mô tả ngắn": "Dạng bào chế,Siro\nQuy cách,Chai\nThành phần,Guaifenesin\nXuất xứ thương hiệu,Việt Nam\nNhà sản xuất,AN THIÊN\nSố đăng ký,VD-24734-16\nThuốc cần kê toa,Không\nMô tả ngắn,Atersin An Thiên 60 ml do Công ty Cổ phần Dược phẩm An Thiên sản xuất. Thuốc được dùng để điều trị nhiễm trùng cấp ở đường hô hấp trên, ho do hen phế quản, viêm phế quản, khí phế thũng, giãn phế quản, nhiễm trùng cấp ở đường hô hấp trên và bệnh lý liên quan gây khó khăn trong việc hít thở...\n",
-        "Hoạt chất": "Guaifenesin",
+        "Hoạt chất": "Guaifenesin (dạng siro)",
         "Số lượng": 3000,
         "Liều dùng": "60ml"
     },
@@ -9796,7 +9796,7 @@
         ],
         "Biệt dược": "Thuốc Efferalgan 150mg Upsa SAS hạ sốt, giảm đau ở trẻ em (12 gói)",
         "Mô tả ngắn": "Danh mục,Thuốc giảm đau (không opioid) & hạ sốt\nDạng bào chế,Dạng bột\nQuy cách,Hộp 12 Gói\nThành phần,Paracetamol\nXuất xứ thương hiệu,Pháp\nNhà sản xuất,UPSA SAS\nSố đăng ký,VN-21849-19\nThuốc cần kê toa,Không\nMô tả ngắn,Bột sủi \n",
-        "Hoạt chất": "Paracetamol",
+        "Hoạt chất": "Paracetamol (dạng sủi)",
         "Số lượng": 7800,
         "Liều dùng": "150mg"
     },
@@ -11064,7 +11064,7 @@
         ],
         "Biệt dược": "Thuốc Codeforte Nam Hà điều trị viêm họng, viêm phổi, viêm thanh quản (125ml)",
         "Mô tả ngắn": "Dạng bào chế,Siro\nQuy cách,Chai\nThành phần,Guaifenesin\nXuất xứ thương hiệu,Việt Nam\nNhà sản xuất,Nam Hà\nSố đăng ký,V810-H12-05\nThuốc cần kê toa,Không\nMô tả ngắn,Codeforte là sản phẩm của Công ty Cổ phần Dược phẩm Nam Hà có thành phần chính là Codein phosphat, Clorpheniramin maleat, Guaifenesin có tác dụng điều trị ho do các nguyên nhân khác nhau: Viêm phế quản có tiết đờm, v , ho do kích ứng và dị ứng.\n",
-        "Hoạt chất": "Guaifenesin",
+        "Hoạt chất": "Guaifenesin (dạng siro)",
         "Số lượng": 4100,
         "Liều dùng": "125ml"
     },
@@ -11574,7 +11574,7 @@
         ],
         "Biệt dược": "Thuốc nhỏ mũi Rhinex Uphace điều trị viêm mũi, viêm xoang, dị ứng (15ml)",
         "Mô tả ngắn": "Dạng bào chế,Dung dịch\nQuy cách,Chai\nThành phần,Naphazoline\nChỉ định,Viêm mũi\nXuất xứ thương hiệu,Việt Nam\nNhà sản xuất,Uphace\nSố đăng ký,VD-23085-15\nThuốc cần kê toa,Có\nMô tả ngắn,Thuốc Rhinex 0,05% do Công ty Cổ phần Dược phẩm Trung ương 25 sản xuất, có thành phần chính là Naphazoline nitrat. Thuốc Rhinex 0,05% được dùng nhỏ mũi hoặc xịt để giảm triệu chứng và giảm sung huyết trong các trường hợp viêm mũi cấp hoặc mạn tính, viêm xoang, cảm lạnh, dị ứng. Ngoài ra thuốc dùng để giảm sưng, dễ quan sát niêm mạc mũi họng trước khi phẫu thuật, làm thông lỗ vòi nhĩ bị tắc ở người bệnh viêm tai.\nLưu ý,\n",
-        "Hoạt chất": "Naphazoline",
+        "Hoạt chất": "Naphazoline nhỏ mũi",
         "Số lượng": 9400,
         "Liều dùng": "15ml"
     },
@@ -12604,7 +12604,7 @@
         ],
         "Biệt dược": "Sirô Ameflu Expectorant OPV hỗ trợ điều trị nhức đầu, đau họng, thông mũi (60ml)",
         "Mô tả ngắn": "Dạng bào chế,Siro\nQuy cách,Chai\nThành phần,Guaifenesin\nChỉ định,Viêm mũi\nChống chỉ định,Dị ứng thuốc\nXuất xứ thương hiệu,Việt Nam\nNhà sản xuất,OPV\nSố đăng ký,VD-16960-12\nThuốc cần kê toa,Có\nMô tả ngắn,Thuốc Ameflu được sản xuất bởi công ty cổ phần dược phẩm OPV, có thành phần chính là acetaminophen, phenylephrin HCl, dextromethorphan HBr, chlorpheniramin maleat. Thuốc Ameflu được chỉ định trong trường hợp làm giảm tạm thời các triệu chứng cảm lạnh thông thường; các cơn đau nhẹ, nhức đầu, đau họng, sung huyết mũi (nghẹt mũi), ho, chảy mũi, hắt hơi và sốt.\nLưu ý,\n",
-        "Hoạt chất": "Guaifenesin",
+        "Hoạt chất": "Guaifenesin (dạng siro)",
         "Số lượng": 6900,
         "Liều dùng": "60ml"
     },
@@ -14629,7 +14629,7 @@
         ],
         "Biệt dược": "Thuốc nhỏ mắt Daigaku Santen điều trị mỏi mắt, viêm mắt (15ml)",
         "Mô tả ngắn": "Dạng bào chế,Dung dịch\nQuy cách,Chai\nThành phần,Naphazoline\nChỉ định,Nhức mỏi mắt\nXuất xứ thương hiệu,Nhật Bản\nNhà sản xuất,NHÃN KHÁC\nSố đăng ký,VN-19737-16\nThuốc cần kê toa,Không\nMô tả ngắn,Thuốc nhỏ mắt Daigaku® của công ty dược phẩm Santen, thành phần chính bao gồm: kẽm sulfat hydrat, clorpheniramin maleat, naphazolin hydroclorid, acid – ε aminocaproic. Daigaku® được sử dụng cho mắt mệt mỏi và mắt viêm.\n",
-        "Hoạt chất": "Naphazoline",
+        "Hoạt chất": "Naphazoline nhỏ mũi",
         "Số lượng": 7300,
         "Liều dùng": "15ml"
     },
@@ -15164,7 +15164,7 @@
         ],
         "Biệt dược": "Bột sủi Efferalgan 250mg Bristol Myers Squibb giảm đau đầu, trị cúm (12 gói)",
         "Mô tả ngắn": "Dạng bào chế,Dạng bột\nQuy cách,Hộp 12 Gói\nThành phần,Paracetamol\nXuất xứ thương hiệu,Pháp\nNhà sản xuất,UPSA SAS\nSố đăng ký,VN-21413-18\nThuốc cần kê toa,Không\nMô tả ngắn,Efferalgan 250mg\n",
-        "Hoạt chất": "Paracetamol",
+        "Hoạt chất": "Paracetamol (dạng sủi)",
         "Số lượng": 6900,
         "Liều dùng": "250mg"
     },
@@ -15209,9 +15209,9 @@
         ],
         "Biệt dược": "Thuốc Efferalgan Codeine Bristol Myers Squibb giúp giảm đau cấp tính (10 vỉ x 4 viên)",
         "Mô tả ngắn": "Dạng bào chế,Viên sủi\nQuy cách,Hộp 10 vỉ x 4 viên\nThành phần,Paracetamol\nChỉ định,Sốt\nChống chỉ định,Suy gan, Suy hô hấp cấp, Suy hô hấp mạn\nXuất xứ thương hiệu,Pháp\nNhà sản xuất,UPSA SAS\nSố đăng ký,VN-20953-18\nThuốc cần kê toa,Có\nMô tả ngắn,Thuốc \nLưu ý,\n",
-        "Hoạt chất": "Paracetamol",
+        "Hoạt chất": "Paracetamol (dạng sủi)",
         "Số lượng": 4000,
-        "Liều dùng": null
+        "Liều dùng": "500mg"
     },
     {
         "url": "https://nhathuoclongchau.com.vn/thuoc/enat-400-3873.html",
@@ -15851,7 +15851,7 @@
         ],
         "Biệt dược": "Thuốc xịt mũi Hadocort-D Hà Tây điều trị viêm mũi, viêm xoang (15ml)",
         "Mô tả ngắn": "Dạng bào chế,Dạng xịt\nQuy cách,Chai\nThành phần,Dexamethasone\nChỉ định,Viêm họng\nChống chỉ định,Mang thai, Trầm cảm\nXuất xứ thương hiệu,Việt Nam\nNhà sản xuất,HÀ TÂY\nSố đăng ký,VD-23555-15\nThuốc cần kê toa,Có\nMô tả ngắn,Thuốc xịt tai, mũi họng Hadocort-D của Công ty Cổ Phần Dược Phẩm Hà Tây chứa các thành phần chính bao gồm: Dexamethason, Neomycin, Xylometazolin. Hadocort-D được sử dụng trong các trường hợp điều trị: Các bệnh viêm mũi, viêm xoang, viêm mũi dị ứng, ngạt mũi, sổ mũi, viêm họng cấp và mãn tính, viêm tai giữa, tai trong.\nLưu ý,\n",
-        "Hoạt chất": "Dexamethasone",
+        "Hoạt chất": "Dexamethasone nhỏ mũi",
         "Số lượng": 2900,
         "Liều dùng": "15ml"
     },
@@ -17137,7 +17137,7 @@
         ],
         "Biệt dược": "Thuốc Methorfar 15mg Pharmedic điều trị triệu chứng ho do họng và phế quản bị kích thích (100 viên)",
         "Mô tả ngắn": "Dạng bào chế,Viên nén\nQuy cách,Hộp 10 Vỉ x 10 Viên\nThành phần,Dextromethorphan\nChỉ định,Viêm mũi dị ứng\nChống chỉ định,U xơ tuyến tiền liệt, Nhược cơ\nXuất xứ thương hiệu,Việt Nam\nNhà sản xuất,PHARMEDIC\nSố đăng ký,VD-11551-10\nThuốc cần kê toa,Có\nMô tả ngắn,Methorfar 15\nLưu ý,\n",
-        "Hoạt chất": "Dextromethorphan",
+        "Hoạt chất": "Dextromethorphan (dạng viên)",
         "Số lượng": 7200,
         "Liều dùng": "15mg"
     },
@@ -18301,7 +18301,7 @@
         ],
         "Biệt dược": "Thuốc nhỏ mũi Rhinex 0.05% Uphace giảm sung huyết viêm mũi (15ml)",
         "Mô tả ngắn": "Dạng bào chế,Dung dịch\nQuy cách,Chai\nThành phần,Naphazoline\nChỉ định,Viêm mũi\nChống chỉ định,Glôcôm\nXuất xứ thương hiệu,Việt Nam\nNhà sản xuất,Uphace\nSố đăng ký,VD-23085-15\nThuốc cần kê toa,Có\nMô tả ngắn,Thuốc Rhinex 0,5%\nLưu ý,\n",
-        "Hoạt chất": "Naphazoline",
+        "Hoạt chất": "Naphazoline nhỏ mũi",
         "Số lượng": 5900,
         "Liều dùng": "15ml"
     },
@@ -20447,7 +20447,7 @@
         ],
         "Biệt dược": "Viên sủi Efferalgan 500mg hỗ trợ giảm đau, hạ sốt (4 vỉ x 4 viên)",
         "Mô tả ngắn": "Danh mục,Thuốc giảm đau (không opioid) & hạ sốt\nDạng bào chế,Viên sủi\nQuy cách,Hộp 4 Vỉ x 4 Viên\nThành phần,Paracetamol\nXuất xứ thương hiệu,Pháp\nNhà sản xuất,UPSA SAS\nSố đăng ký,VD-21216-18\nThuốc cần kê toa,Không\nMô tả ngắn,Viên sủi \n",
-        "Hoạt chất": "Paracetamol",
+        "Hoạt chất": "Paracetamol (dạng sủi)",
         "Số lượng": 3000,
         "Liều dùng": "500mg"
     },
@@ -22365,7 +22365,7 @@
         ],
         "Biệt dược": "Thuốc Biviflu BRV điều trị các triệu chứng cảm cúm (120 viên)",
         "Mô tả ngắn": "Dạng bào chế,Viên nén bao phim\nQuy cách,Hộp 10 Vỉ x 12 Viên\nThành phần,Dextromethorphan hydrobromid\nXuất xứ thương hiệu,Việt Nam\nNhà sản xuất,BRV\nSố đăng ký,VD-27676-17\nThuốc cần kê toa,Có\nMô tả ngắn,Thuốc Biviflu là sản phẩm của Công ty TNHH BRV Healthcare có thành phần chính là paracetamol, loratadin và dextromethorphan hdrobromid có tác dụng điều trị các triệu chứng cảm cúm như: Sốt, ho, sổ\nLưu ý,\n",
-        "Hoạt chất": "Dextromethorphan",
+        "Hoạt chất": "Dextromethorphan (dạng viên)",
         "Số lượng": 8400,
         "Liều dùng": null
     },
@@ -22413,5 +22413,17 @@
         "Hoạt chất": "Celecoxib",
         "Số lượng": 7900,
         "Liều dùng": "200mg"
+    },
+    {
+        "url": "https://nhathuoclongchau.com.vn/thuoc/thuoc-ho-bao-thanh-125ml-496.html",
+        "Phân loại": [
+            "Thuốc thay thế ( y học cổ truyền & hỗ trợ khác)",
+            "Những sản phẩm thảo dược"
+        ],
+        "Biệt dược": "Siro ho Bảo Thanh Hoa Linh hỗ trợ điều trị các chứng ho (125ml)",
+        "Mô tả ngắn": "Danh mục,Những sản phẩm thảo dược\nDạng bào chế,Siro\nQuy cách,Chai\nThành phần,Ô mai\nChỉ định,Viêm họng\nChống chỉ định,Động kinh, Bệnh tiểu đường, Co giật\nXuất xứ thương hiệu,Việt Nam\nNhà sản xuất,Hoa Linh\nSố đăng ký,VD-22646-15\nThuốc cần kê toa,Không\nMô tả ngắn,Thuốc ho Bảo Thanh\n",
+        "Hoạt chất": "Ho Bảo Thanh (dạng siro)",
+        "Số lượng": 9200,
+        "Liều dùng": "125ml"
     }
 ]
