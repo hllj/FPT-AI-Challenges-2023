@@ -70,7 +70,6 @@ def click_button_suggestion(summary_info,properties):
                 st.form_submit_button(label='Lựa chọn', on_click=form_submit, args=(drug_choose,prescription,properties,))              
                     
 def form_submit(drug_choose,prescription,properties):
-    print(drug_choose)
     text = "Bạn đã chọn\n\n"
     final_prescription = prescription
     for active in drug_choose:
@@ -78,7 +77,7 @@ def form_submit(drug_choose,prescription,properties):
         final_prescription = final_prescription.replace(active, drug_choose[active])
     final_prescription = final_prescription
     if final_prescription:
-        st.markdown('Bạn có muốn gửi đơn thuốc cho bệnh nhân không ?')
+        st.markdown(final_prescription)
         st.button('Gửi đơn thuốc cho bệnh nhân', on_click=click_send_prescription, args=(final_prescription,properties,))
 
 if __name__ == "__main__":

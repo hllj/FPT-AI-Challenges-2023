@@ -46,7 +46,7 @@ system_text = open_file('prompt/system_patient.txt')
 
 def callback_doctor_app(ch, method, properties, body):
     prescription = body.decode("utf-8")
-    st.markdown("Đơn thuốc của bác sĩ\n" + prescription)   
+    st.markdown("Đơn thuốc của bác sĩ \n" + prescription)   
     # st.status.update(label="Complete!", state="complete", expanded=False)   
     state = {
         'sessionId': st.session_state.sessionId,
@@ -164,7 +164,7 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
         channel.basic_publish('', routing_key='request-queue', properties=pika.BasicProperties(
             reply_to=reply_queue.method.queue,
             correlation_id=st.session_state.sessionId
-        ), body=json.dumps(st.session_state.summary))
+        ), body=st.session_state.summary)
 
         channel.start_consuming()
       
