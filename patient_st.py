@@ -56,7 +56,7 @@ def callback_doctor_app(ch, method, properties, body):
         json.dump(state, f, ensure_ascii=False, indent=4)
 
 
-url = os.environ.get('CLOUDAMQP_URL', 'amqp://bbcaqtmc:tX2Nex9rE8bJsrFNjvr9c7q-Mw-AqZ5w@armadillo.rmq.cloudamqp.com/bbcaqtmc')
+url = os.environ.get('CLOUDAMQP_URL', 'amqps://ndtfovdr:pRLAJm2d7gIyFOaxlq74Q0PEg3fDsLnw@gerbil.rmq.cloudamqp.com/ndtfovdr')
 params = pika.URLParameters(url)
 params.socket_timeout = 10
 

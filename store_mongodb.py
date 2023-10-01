@@ -40,7 +40,7 @@ def push_collections():
         drug_items = json.load(f)
     db.insert_many("drug", drug_items)
     
-    with open("data/storage/add_filterd.json") as f:
+    with open("data/storage/add_filtered.json") as f:
         add_items = json.load(f)
     db.insert_many("add", add_items)
         
