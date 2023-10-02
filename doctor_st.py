@@ -30,8 +30,9 @@ def on_request_message_received(channel, method, properties, body):
     st.session_state.summary_info = summary_info
     st.session_state.properties = properties
     
-    st.info(st.session_state.summary_info, icon="ℹ️")
-    st.button(label='Đưa ra đơn thuốc tham khảo', key="summary_button", on_click=click_button_suggestion, args=(st.session_state.summary_info, st.session_state.properties,))
+    col1, _, _ = st.columns([3, 3, 6])
+    col1.info(st.session_state.summary_info, icon="ℹ️")
+    col1.button(label='Đưa ra đơn thuốc tham khảo', key="summary_button", on_click=click_button_suggestion, args=(st.session_state.summary_info, st.session_state.properties,))
     
 
 def click_button_suggestion(summary_info,properties):
@@ -69,7 +70,7 @@ def form_submit(drug_choose,prescription,properties):
         final_prescription = final_prescription.replace(active, drug_choose[active])
     st.session_state.final_prescription = final_prescription
 
-@st.cache_data(experimental_allow_widgets=True)
+@st.cache_data(experimental_allow_widgets=True, show_spinner=False)
 def consumer(st):
     # Integrate RabbitMQ
 
@@ -88,6 +89,7 @@ if __name__ == "__main__":
     st.set_page_config(
         page_title="Hệ thống hỗ trợ bác sĩ",
         page_icon=":robot_face:",
+        layout='wide'
     )
 
     st.title("🤖 Hệ thống hỗ trợ bác sĩ")
@@ -108,33 +110,45 @@ if __name__ == "__main__":
     st.sidebar.subheader("Mô tả")
     st.sidebar.write("Đây là một trợ lý y tế ảo dành cho dược sĩ dễ dàng chọn các đơn thuốc cho bệnh nhân")
         
-    if 'prescription' in st.session_state or ('actives' in st.session_state and len(st.session_state.actives) > 0):
-        drug_choose = {}
-        for active in st.session_state.actives:
-            col1, col2 = st.columns([10, 2])
-            col1.markdown('**' + 'Hoạt chất: ' + active['active'] + '**')
-            check = col2.checkbox(label="Lựa chọn", key=active["active"])
-            placeholder = st.empty()
-            if check is True:
-                with placeholder.container():
-                    for drug in active['drugs']:
-                        col1, col2, col3 = st.columns([6, 4, 2])
-                        with col1:
-                            st.markdown(drug['Biệt dược'])
-                        with col2:
-                            st.markdown("Số lượng hiện còn: " + str(drug['Số lượng']))
-                        with col3:
-                            checkbox_value = st.checkbox(label=drug['_id'], value=False, key=drug['_id'], label_visibility="hidden")
-                            if checkbox_value == True:
-                                drug_choose[active['active']] = drug['Biệt dược']
-                        st.divider()
-            else:
-                drug_choose.pop(active['active'], None)
-                placeholder.empty()
-        form_button = st.button(label='Gửi lựa chọn', on_click=form_submit, args=(drug_choose,st.session_state.prescription, st.session_state.properties))
+    if 'prescription' in st.session_state and ('final_prescription' not in st.session_state) and ('actives' in st.session_state and len(st.session_state.actives) > 0):
+        with st.empty():
+            col1, col2, col3 = st.columns([3, 3, 6])
+            col1.info(st.session_state.summary_info, icon="ℹ️")
+            col2.info(st.session_state.prescription, icon="🤖")
+            with col3:
+                drug_choose = {}
+                for active in st.session_state.actives:
+                    col1, col2 = st.columns([10, 2])
+                    col1.markdown('**' + 'Hoạt chất: ' + active['active'] + '**')
+                    check = col2.checkbox(label="Lựa chọn", key=active["active"])
+                    placeholder = st.empty()
+                    if check is True:
+                        with placeholder.container():
+                            for drug in active['drugs']:
+                                col1, col2, col3 = st.columns([6, 4, 2])
+                                with col1:
+                                    st.markdown(drug['Biệt dược'])
+                                with col2:
+                                    st.markdown("Số lượng hiện còn: " + str(drug['Số lượng']))
+                                with col3:
+                                    checkbox_value = st.checkbox(label=drug['_id'], value=False, key=drug['_id'], label_visibility="hidden")
+                                    if checkbox_value == True:
+                                        drug_choose[active['active']] = drug['Biệt dược']
+                                st.divider()
+                    else:
+                        drug_choose.pop(active['active'], None)
+                        placeholder.empty()
+                form_button = st.button(label='Gửi lựa chọn', on_click=form_submit, args=(drug_choose,st.session_state.prescription, st.session_state.properties))
     
     if 'final_prescription' in st.session_state:
-        st.markdown(st.session_state.final_prescription)
-        st.button('Gửi đơn thuốc cho bệnh nhân', on_click=click_send_prescription, args=(st.session_state.final_prescription, st.session_state.properties,))
+        with st.spinner('Đang chờ xử lý'):
+            time.sleep(0.2)
+        with st.container():
+            col1, col2, col3 = st.columns([3, 3, 6])
+            col1.info(st.session_state.summary_info, icon="ℹ️")
+            col2.info(st.session_state.prescription, icon="🤖")
+            with col3:
+                st.markdown("Đây là đơn thuốc bạn đã chọn cho bệnh nhân, \n\n" + st.session_state.final_prescription)
+                st.button('Gửi đơn thuốc cho bệnh nhân', on_click=click_send_prescription, args=(st.session_state.final_prescription, st.session_state.properties,))
     
     asyncio.run(consumer(st))
