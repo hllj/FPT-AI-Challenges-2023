@@ -12,7 +12,7 @@ from llama_index.vector_stores import PineconeVectorStore
 from llama_index.storage.storage_context import StorageContext
 from langchain.chat_models import ChatOpenAI
 import pinecone
-load_dotenv()
+load_dotenv('.env.default')
 openai.api_key = os.environ.get('OPENAI_API_KEY')
 
 # Example of loading data
@@ -30,16 +30,11 @@ reader = SimpleDirectoryReader(input_files=input_files)
 documents = reader.load_data()
 import re
 regex = r"Triệu chứng:\s*(.*?)\n\s*----------";
-# regex2 = r"Chuẩn đoán:\s*(.*?)\n\s*----------";
 
 for d,b in zip(documents,input_files):    
-    #print(b.split("/")[-1].split(".")[0].split("-")[-1])
     info = b.split("/")[-1].split(".")[0].split("-")[-1]
     match = re.search(regex, d.text, re.DOTALL)
     symptoms = re.sub(r"[\n]*", "", match.group(1))
-    #   match2 = re.search(regex2, d.text, re.DOTALL)
-    #   diagnose = re.sub(r"[\n]*", "", match2.group(1))
-    #   d.metadata = {"Triệu chứng": symptoms,"Chuẩn đoán": diagnose}
     d.metadata = {"Triệu chứng": symptoms,"Nhóm bệnh nhân": info}
 
 # # Initialize LLM and Embedding models

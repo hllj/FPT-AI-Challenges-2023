@@ -126,7 +126,7 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
                     {"role": m["role"], "content": m["content"]}
                     for m in st.session_state.messages
                 ],
-                temperature=0.1,  # Set temperature
+                temperature=0.2,  # Set temperature
                 max_tokens=1024,  # Set max tokens
                 stream=True,
             ):

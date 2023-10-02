@@ -36,45 +36,13 @@ def push_collections():
     
     db = StorageMongoDB(MONGODB_SERVER, MONGODB_PORT, MONGODB_DB)
     
-    with open("data/storage/drug_filtered.json") as f:
+    with open("data/storage/drug_filtered.json", encoding='utf-8') as f:
         drug_items = json.load(f)
     db.insert_many("drug", drug_items)
     
-    with open("data/storage/add_filtered.json") as f:
+    with open("data/storage/add_filtered.json", encoding='utf-8') as f:
         add_items = json.load(f)
     db.insert_many("add", add_items)
         
 if __name__ == '__main__':
     push_collections()
-    
-    # MONGODB_SERVER = "localhost"
-    # MONGODB_PORT = 27017
-    # MONGODB_DB = "storage"
-    
-    # db = StorageMongoDB(MONGODB_SERVER, MONGODB_PORT, MONGODB_DB)
-    
-    # # drugs = db.find_drug('Ibuprofen')
-    
-    # # for drug in drugs:
-    # #     print(drug)
-    
-    # # print(db.actives)
-    
-    # text = "Đơn thuốc tham khảo:\n\n1. Paracetamol: Dùng để giảm sốt và giảm đau.\n   Liều lượng: Uống 1-2 viên mỗi 4-6 giờ khi cần thiết. Không vượt quá 8 viên trong 24 giờ.\n\n2. Ibuprofen: Dùng để giảm đau và giảm viêm.\n   Liều lượng: Uống 1-2 viên mỗi 6-8 giờ khi cần thiết. Không vượt quá 6 viên trong 24 giờ.\n\n3. Chlorpheniramine: Dùng để giảm triệu chứng dị ứng như chảy nước mũi và ngứa.\n   Liều lượng: Uống 1-2 viên mỗi 4-6 giờ khi cần thiết. Không vượt quá 6 viên trong 24 giờ.\n\n4. Dextromethorphan: Dùng để giảm ho.\n   Liều lượng: Uống 1-2 viên mỗi 4-6 giờ khi cần thiết. Không vượt quá 8 viên trong 24 giờ.\n\nLưu ý: Đây chỉ là đơn thuốc tham khảo và không thay thế cho sự tư vấn và chỉ định của bác sĩ. Trước khi sử dụng bất kỳ loại thuốc nào, hãy tham khảo ý kiến ​​của bác sĩ hoặc nhà dược."
-    
-    # all_active = []
-    
-    # for active in db.actives:
-    #     if active == None:
-    #         continue
-    #     if active in text:
-    #         x = re.search(active, text)
-    #         all_active.append({
-    #             'active': active, 
-    #             'start': x.start()
-    #         })
-    #         print(x.start())
-    
-    # all_active.sort(key=lambda x: x['start'])
-
-    # print(all_active)

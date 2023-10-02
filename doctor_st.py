@@ -11,7 +11,7 @@ import os
 import json
 import time 
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv('.env.default')
 
 import asyncio
 
@@ -87,12 +87,12 @@ def consumer(st):
 if __name__ == "__main__":
     # Custom Streamlit app title and icon
     st.set_page_config(
-        page_title="Hệ thống hỗ trợ bác sĩ",
+        page_title="Hệ thống hỗ trợ dược sĩ",
         page_icon=":robot_face:",
         layout='wide'
     )
 
-    st.title("🤖 Hệ thống hỗ trợ bác sĩ")
+    st.title("🤖 Hệ thống hỗ trợ dược sĩ")
 
     # Sidebar Configuration
     st.sidebar.title("FPT AI CHALLENGE 2023")
@@ -108,7 +108,7 @@ if __name__ == "__main__":
 
     # Enhance the sidebar styling
     st.sidebar.subheader("Mô tả")
-    st.sidebar.write("Đây là một trợ lý y tế ảo dành cho dược sĩ dễ dàng chọn các đơn thuốc cho bệnh nhân")
+    st.sidebar.write("Đây là một trợ lý y tế ảo dành cho dược sĩ dễ dàng kê các đơn thuốc phù hợp cho bệnh nhân")
         
     if 'prescription' in st.session_state and ('final_prescription' not in st.session_state) and ('actives' in st.session_state and len(st.session_state.actives) > 0):
         with st.empty():
