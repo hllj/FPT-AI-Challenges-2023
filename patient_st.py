@@ -51,7 +51,8 @@ system_text = open_file('prompt/system_patient.txt')
 def callback_doctor_app(ch, method, properties, body):
     prescription = body.decode("utf-8")
     st.markdown("Đơn thuốc của bác sĩ \n" + prescription)   
-    # st.status.update(label="Complete!", state="complete", expanded=False)   
+    # st.status.update(label="Complete!", state="complete", expanded=False)
+    st.session_state.doctor_response = prescription
     state = {
         'sessionId': st.session_state.sessionId,
         'prescription': prescription,
@@ -164,7 +165,6 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
             st.markdown("Đây là một số thông tin mà tôi đã tổng hợp\n" + st.session_state.summary)
             
         with st.status("Đang gửi tới cho bác sĩ ...", expanded=True) as status:
-            st.session_state.doctor_response = prescription
             time.sleep(0.5)
             status.update(label="Complete!", state="complete", expanded=False)
             
