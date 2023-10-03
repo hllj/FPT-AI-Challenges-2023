@@ -59,10 +59,10 @@ def get_actives(prescription):
         if active == None:
             continue
         if active in prescription:
-            x = re.search(active, prescription)
+            start = prescription.find(active)
             all_active.append({
                 'active': active, 
-                'start': x.start()
+                'start': start
             })
     
     all_active.sort(key=lambda x: x['start'])
