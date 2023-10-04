@@ -74,7 +74,7 @@ def form_submit(drug_choose,prescription,properties):
 def consumer(st):
     # Integrate RabbitMQ
 
-    url = os.environ.get('CLOUDAMQP_URL', 'amqps://ndtfovdr:pRLAJm2d7gIyFOaxlq74Q0PEg3fDsLnw@gerbil.rmq.cloudamqp.com/ndtfovdr')
+    url = os.environ.get('CLOUDAMQP_URL', 'amqp://zxnxwihl:clh0fOpmII4XukWQS8qzj2gbGOspAMX2@fuji.lmq.cloudamqp.com/zxnxwihl')
     params = pika.URLParameters(url)
     params.socket_timeout = 10
     connection = pika.BlockingConnection(params) # Connect to CloudAMQP
