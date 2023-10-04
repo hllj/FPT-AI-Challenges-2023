@@ -8,11 +8,6 @@ import uuid
 import os
 import json
 from utils import open_file,get_summary
-import io
-from PIL import Image
-import qrcode
-import time
-import threading
 
 if 'sessionId' not in st.session_state:
     st.session_state.sessionId = str(uuid.uuid4())
@@ -51,12 +46,8 @@ system_text = open_file('prompt/system_patient.txt')
     
 def callback_doctor_app(ch, method, properties, body):
     prescription = body.decode("utf-8")
-    st.markdown("Đơn thuốc của dược sĩ \n" + prescription)
-
-    with st.status("Bạn vui lòng chờ ít phút...", expanded=True) as status:
-        st.session_state.doctor_response = prescription
-    status.update(label="Hoàn thành!", state="complete", expanded=False)
-    st.rerun()
+    st.markdown("Đơn thuốc của bác sĩ \n" + prescription)   
+    # st.status.update(label="Complete!", state="complete", expanded=False)   
     state = {
         'sessionId': st.session_state.sessionId,
         'prescription': prescription,
@@ -167,13 +158,8 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
             status.update(label="Complete!", state="complete", expanded=False)
             # st.status("Completed!").update("Response generated.")
         
-        with st.chat_message("assistant"):
-            st.markdown("Đây là một số thông tin mà tôi đã tổng hợp\n" + st.session_state.summary)
-            
-        with st.status("Đang gửi tới cho dược sĩ ...", expanded=True) as status:
-            time.sleep(0.5)
-            status.update(label="Complete!", state="complete", expanded=False)
-            
+        st.markdown("Đây là một số thông tin mà tôi đã tổng hợp\n" + st.session_state.summary)
+
         # RabbitMQ Integration
         print(f'summary: {st.session_state.summary}')
         st.info('Dược sĩ đã tham gia vào đoạn chat', icon="ℹ️")
@@ -198,39 +184,4 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
     with open(f'users/{st.session_state.sessionId}.json', 'w', encoding='utf-8') as f:
         json.dump(state, f, ensure_ascii=False, indent=4)
         
-if 'doctor_response' in st.session_state:
-    with st.spinner('Xin chờ một chút ...'):
-        time.sleep(1)
-    st.success('Dược sĩ đã xử lý xong!')
-    with st.chat_message("doctor",avatar ="🧑"):
-        st.markdown(st.session_state.doctor_response)
-    agree_button = st.button('Tôi đồng ý', key="agree_btn")
-    disagree_button = st.button('Tôi không đồng ý', key="disagree_btn")
-    if agree_button:
-        st.session_state.agree = True
-        user_agreement = 'Tôi đồng ý'
-    else:
-        st.session_state.agree = False
-        user_agreement = 'Tôi không đồng ý'
-    
-    if st.session_state.agree:
-        with st.chat_message("user"):
-            st.markdown(user_agreement)
-                        
-        with st.chat_message("assistant"):
-            st.markdown("Cảm ơn bạn đã tin tưởng vào chúng tôi. \n\n Bạn có muốn chúng tôi đặt đơn thuốc giúp bạn không ạ?")
         
-        st.button('Có, hãy giúp tôi đặt đơn hàng!', on_click=drug_proceed)
-
-if 'proceed' in st.session_state and st.session_state.proceed == True:
-    with st.spinner('Đang thiết lập đơn hàng'):
-        time.sleep(1.0)
-    data = st.session_state.doctor_response
-    img = qrcode.make(data)
-    img_byte_arr = io.BytesIO()
-    img.save(img_byte_arr, format='PNG')
-    img_byte_arr = img_byte_arr.getvalue()
-
-    with st.chat_message("assistant"):
-        st.image(img_byte_arr, width=150)
-        st.info('Chúng tôi đã thiết lập đơn hàng cho bạn, vui lòng bạn quét mã QR để tiến hành đặt đơn')

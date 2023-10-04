@@ -6,7 +6,7 @@ import json
 class RabbitMQ_Client(object):
 
     def __init__(self):
-        url = os.environ.get('CLOUDAMQP_URL', 'amqp://ndtfovdr:pRLAJm2d7gIyFOaxlq74Q0PEg3fDsLnw@gerbil.rmq.cloudamqp.com/ndtfovdr')
+        url = os.environ.get('CLOUDAMQP_URL', 'amqp://zxnxwihl:clh0fOpmII4XukWQS8qzj2gbGOspAMX2@fuji.lmq.cloudamqp.com/zxnxwihl')
         params = pika.URLParameters(url)
         params.socket_timeout = 10
 
