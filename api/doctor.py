@@ -37,21 +37,8 @@ app = FastAPI()
 class PatientDescription(BaseModel):
     summary: str
     
-class Prescription(BaseModel):
-    text: str
-
-@app.post("/doctor")
-def send_to_doctor(description: PatientDescription):
-    summary = description.summary
-    response = query_engine.query(summary)
-    return {
-        "msg": "SUCCESS",
-        "code": 0,
-        "data": {
-            "response": response
-        }
-    }
-    
+# class Prescription(BaseModel):
+#     text: str
 
 def get_actives(prescription):
     all_active = []
@@ -68,11 +55,13 @@ def get_actives(prescription):
     all_active.sort(key=lambda x: x['start'])
 
     return all_active
-    
-@app.get("/storage")
-def get_drugs(prescription: Prescription):
-    print(prescription.text)
-    all_actives = get_actives(prescription.text)
+
+@app.post("/doctor")
+def send_to_doctor(description: PatientDescription):
+    summary = description.summary
+    response = query_engine.query(summary)
+    prescription = response.response
+    all_actives = get_actives(prescription)
     all_drugs = []
     
     for active in all_actives:
@@ -84,14 +73,39 @@ def get_drugs(prescription: Prescription):
             'active': active_name,
             'drugs': drugs
         })
-    
-    print('check', all_drugs)
-    
     return {
         "msg": "SUCCESS",
         "code": 0,
         "data": {
-            "response": all_drugs
+            "prescription": prescription,
+            "drugs": all_drugs
         }
     }
+
+    
+# @app.get("/storage")
+# def get_drugs(prescription: Prescription):
+#     print(prescription.text)
+#     all_actives = get_actives(prescription.text)
+#     all_drugs = []
+    
+#     for active in all_actives:
+#         active_name = active['active']
+#         drugs = list(storage_db.find_drug(active_name, 3, -1))
+#         for idx, drug in enumerate(drugs):
+#             drugs[idx]['_id'] = str(drug['_id'])
+#         all_drugs.append({
+#             'active': active_name,
+#             'drugs': drugs
+#         })
+    
+#     print('check', all_drugs)
+    
+#     return {
+#         "msg": "SUCCESS",
+#         "code": 0,
+#         "data": {
+#             "response": all_drugs
+#         }
+#     }
     

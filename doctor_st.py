@@ -45,22 +45,11 @@ def click_button_suggestion(summary_info,properties):
     }
 
     response = requests.request("POST", url, headers=headers, data=payload)
-    prescription = response.json()['data']['response']['response']
-    if prescription:
-        url = "http://localhost:3000/storage"
+    prescription = response.json()['data']['prescription']
+    actives = response.json()['data']['drugs']
 
-        payload = json.dumps({
-            "text": prescription
-        })
-        headers = {
-            'Content-Type': 'application/json'
-        }
-
-        response = requests.request("GET", url, headers=headers, data=payload)
-        actives = response.json()['data']['response']
-
-        st.session_state.actives = actives
-        st.session_state.prescription = prescription   
+    st.session_state.actives = actives
+    st.session_state.prescription = prescription   
                     
 def form_submit(drug_choose,prescription,properties):
     text = "Bạn đã chọn\n\n"
@@ -74,7 +63,7 @@ def form_submit(drug_choose,prescription,properties):
 def consumer(st):
     # Integrate RabbitMQ
 
-    url = os.environ.get('CLOUDAMQP_URL', 'amqps://ndtfovdr:pRLAJm2d7gIyFOaxlq74Q0PEg3fDsLnw@gerbil.rmq.cloudamqp.com/ndtfovdr')
+    url = os.environ.get('CLOUDAMQP_URL', 'amqp://ezclrtka:zNMh77RlTx9Vz-S1bal3EILSwNcOpDiO@fuji.lmq.cloudamqp.com/ezclrtka')
     params = pika.URLParameters(url)
     params.socket_timeout = 10
     connection = pika.BlockingConnection(params) # Connect to CloudAMQP
