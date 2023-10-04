@@ -8,6 +8,10 @@ import uuid
 import os
 import json
 from utils import open_file,get_summary
+import io
+from PIL import Image
+import qrcode
+import time
 
 if 'sessionId' not in st.session_state:
     st.session_state.sessionId = str(uuid.uuid4())
@@ -38,25 +42,25 @@ st.sidebar.write("Đây là một trợ lý y tế ảo giúp kết nối ngư�
     giúp người dùng có thể được điều trị các bệnh thông thường từ xa")
 
 from dotenv import load_dotenv
-load_dotenv('.env.default')
+load_dotenv()
 openai.api_key = os.environ.get('OPENAI_API_KEY')
 
 system_text = open_file('prompt/system_patient.txt')
 # Initialize RabbitMQ
-    
+
 def callback_doctor_app(ch, method, properties, body):
     prescription = body.decode("utf-8")
     st.markdown("Đơn thuốc của bác sĩ \n" + prescription)   
-    # st.status.update(label="Complete!", state="complete", expanded=False)   
+    # st.status.update(label="Complete!", state="complete", expanded=False)
+    st.session_state.doctor_response = prescription
     state = {
         'sessionId': st.session_state.sessionId,
         'prescription': prescription,
-    }   
+    }
+    st.rerun()
     with open(f'doctors/{st.session_state.sessionId}.json', 'w', encoding='utf-8') as f:
         json.dump(state, f, ensure_ascii=False, indent=4)
-        
-def drug_proceed():
-    st.session_state.proceed = True
+
 
 url = os.environ.get('CLOUDAMQP_URL', 'amqp://zxnxwihl:clh0fOpmII4XukWQS8qzj2gbGOspAMX2@fuji.lmq.cloudamqp.com/zxnxwihl')
 params = pika.URLParameters(url)
@@ -121,7 +125,7 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
         message_placeholder = st.empty()
         
         # Initialize st.status for the task
-        with st.status("Bạn vui lòng chờ ít phút...", expanded=True) as status:
+        with st.status("Processing...", expanded=True) as status:
             for response in openai.ChatCompletion.create(
                 model='gpt-3.5-turbo-0613',  # Use the selected model name
                 messages=[
@@ -136,7 +140,7 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
                 message_placeholder.markdown(full_response + "▌")
             
             # Update st.status to show that the task is complete
-            status.update(label="Hoàn thành!", state="complete", expanded=False)
+            status.update(label="Complete!", state="complete", expanded=False)
         
         message_placeholder.markdown(full_response)
     
@@ -144,7 +148,7 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
     st.session_state.messages.append({"role": "assistant", "content": full_response})
     
     if 'tôi đã thu thập đủ thông tin' in full_response.lower():
-        st.markdown("Tôi đang xử lý và gửi thông tin tới cho dược sĩ.")
+        st.markdown("Tôi đang xử lý và gửi thông tin tới cho bác sĩ.")
         history_context = "\n"
         for m in st.session_state.messages[:-1]:
             if m["role"] == "user":
@@ -158,23 +162,23 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
             status.update(label="Complete!", state="complete", expanded=False)
             # st.status("Completed!").update("Response generated.")
         
-        st.markdown("Đây là một số thông tin mà tôi đã tổng hợp\n" + st.session_state.summary)
-
+        with st.chat_message("assistant"):
+            st.markdown("Đây là một số thông tin mà tôi đã tổng hợp\n" + st.session_state.summary)
+            
+        with st.status("Đang gửi tới cho bác sĩ ...", expanded=True) as status:
+            time.sleep(0.5)
+            status.update(label="Complete!", state="complete", expanded=False)
+            
         # RabbitMQ Integration
         print(f'summary: {st.session_state.summary}')
         st.info('Dược sĩ đã tham gia vào đoạn chat', icon="ℹ️")
-        st.markdown('Tên: Hoàng')
-        st.markdown('Chức vụ: Dược sĩ bán thuốc')
-        st.markdown('Đơn vị công tác: Đại học Y Dược thành phố Hồ Chí Minh')
-        
         channel.basic_publish('', routing_key='request-queue', properties=pika.BasicProperties(
             reply_to=reply_queue.method.queue,
             correlation_id=st.session_state.sessionId
         ), body=st.session_state.summary)
-        
-                
+
         channel.start_consuming()
-                    
+      
     state = {
         'sessionId': st.session_state.sessionId,
         'messages': st.session_state.messages,
@@ -183,5 +187,43 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
     
     with open(f'users/{st.session_state.sessionId}.json', 'w', encoding='utf-8') as f:
         json.dump(state, f, ensure_ascii=False, indent=4)
+
+def drug_proceed():
+    st.session_state.proceed = True
+            
+if 'doctor_response' in st.session_state:
+        with st.spinner('Xin chờ một chút ...'):
+            time.sleep(1)
+        st.success('Bác sĩ đã xử lý xong!')
+        with st.chat_message("doctor"):
+            st.markdown(st.session_state.doctor_response)
+        agree_button = st.button('Tôi đồng ý', key="agree_btn")
+        disagree_button = st.button('Tôi không đồng ý', key="disagree_btn")
+        if agree_button:
+            st.session_state.agree = True
+            user_agreement = 'Tôi đồng ý'
+        else:
+            st.session_state.agree = False
+            user_agreement = 'Tôi không đồng ý'
         
-        
+        if st.session_state.agree:
+            with st.chat_message("user"):
+                st.markdown(user_agreement)
+                            
+            with st.chat_message("assistant"):
+                st.markdown("Cảm ơn bạn đã tin tưởng vào chúng tôi. \n\n Bạn có muốn chúng tôi đặt đơn thuốc giúp bạn không ạ?")
+            
+            st.button('Có, hãy giúp tôi đặt đơn hàng!', on_click=drug_proceed)
+
+if 'proceed' in st.session_state and st.session_state.proceed == True:
+    with st.spinner('Đang thiết lập đơn hàng'):
+        time.sleep(1.0)
+    data = st.session_state.doctor_response
+    img = qrcode.make(data)
+    img_byte_arr = io.BytesIO()
+    img.save(img_byte_arr, format='PNG')
+    img_byte_arr = img_byte_arr.getvalue()
+
+    with st.chat_message("assistant"):
+        st.image(img_byte_arr, width=150)
+        st.info('Chúng tôi đã thiết lập đơn hàng cho bạn, vui lòng bạn quét mã QR để tiến hành đặt đơn')
