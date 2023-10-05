@@ -1,6 +1,7 @@
 # Library
 import glob
 import json
+import re
 import uuid
 import openai
 import requests
@@ -50,12 +51,14 @@ def click_button_suggestion(summary_info,properties):
     st.session_state.actives = actives
     st.session_state.prescription = prescription
                     
-def form_submit(drug_choose,prescription,properties):
+def form_submit(drug_choose, regex_choose, prescription,properties):
     text = "Bạn đã chọn\n\n"
     final_prescription = prescription
     for active in drug_choose:
         text += f"- Hoạt chất {active}: " + drug_choose[active] + "\n\n"
-        final_prescription = final_prescription.replace(active, drug_choose[active])
+        pattern = regex_choose[active].replace('(', '\(').replace(')', '\)')
+        # final_prescription = final_prescription.replace(active, drug_choose[active])
+        final_prescription = re.sub(pattern, drug_choose[active], final_prescription)
     st.session_state.final_prescription = final_prescription
 
 def back_on_click():
@@ -80,11 +83,11 @@ if __name__ == "__main__":
     # Custom Streamlit app title and icon
     st.set_page_config(
         page_title="Hệ thống hỗ trợ dược sĩ",
-        page_icon=":robot_face:",
+        page_icon="👨‍⚕️",
         layout='wide'
     )
 
-    st.title("🤖 Hệ thống hỗ trợ dược sĩ")
+    st.title(":female-doctor: Hệ thống hỗ trợ dược sĩ")
 
     # Sidebar Configuration
     st.sidebar.title("FPT AI CHALLENGE 2023")
@@ -100,7 +103,7 @@ if __name__ == "__main__":
 
     # Enhance the sidebar styling
     st.sidebar.subheader("Mô tả")
-    st.sidebar.write("Đây là một trợ lý y tế ảo dành cho dược sĩ dễ dàng kê các đơn thuốc phù hợp cho bệnh nhân")
+    st.sidebar.write("Đây là một trợ lý y tế ảo dành cho dược sĩ dễ dàng kê các đơn thuốc phù hợp cho bệnh nhân. \n\n Hệ thống sẽ tổng hợp thông tin người dùng và gợi ý các đơn thuốc phù hợp từ nguồn tài liệu uy tín.")
         
     if 'prescription' in st.session_state and ('final_prescription' not in st.session_state) and ('actives' in st.session_state and len(st.session_state.actives) > 0):
         st.empty()
@@ -113,21 +116,27 @@ if __name__ == "__main__":
             with col2:
                 with st.expander('Hãy lựa chọn các biệt dược', expanded=True):
                     drug_choose = {}
+                    regex_choose = {}
                     for idx, active in enumerate(st.session_state.actives):
                         options = ()
                         for drug in active['drugs']:
                             options = options + (drug['Biệt dược'], )
-                        st.markdown(f'{idx + 1}. ' + '**' + 'Hoạt chất: ' + active['active'] + '**')
-                        col1, col2 = st.columns([8, 4])
+                        label = '**' + 'Hoạt chất: ' + active['active'].replace('*', '').replace('.', ' ') + '**'
+                        st.markdown(f'{idx + 1}. ' + label)
+                        col1, col2 = st.columns([2, 1])
                         with col1:
                             option = st.selectbox(
                                 key=active['active'],
-                                label='**' + 'Hoạt chất: ' + active['active'] + '**',
+                                label=label,
                                 label_visibility="collapsed",
                                 options=options,
                                 index=0,
                             )
                         drug_choose[active['active']] = option
+                        for drug in active['drugs']:
+                            if drug['Biệt dược'] == option:
+                                regex_choose[active['active']] = drug[drug['query_field']]
+                                break
                         quantity = [drug['Số lượng'] for drug in active['drugs'] if drug['Biệt dược'] == option][0]
                         col2.text('Số lượng: ' + str(quantity))
                     css='''
@@ -140,7 +149,7 @@ if __name__ == "__main__":
                         '''
                     st.markdown(css, unsafe_allow_html=True)
                 st.text_area(label="Lưu ý của dược sĩ", placeholder="Ghi chú của bạn", key='doctor_reminder')
-                form_button = st.button(label='Xác nhận', on_click=form_submit, args=(drug_choose,st.session_state.prescription, st.session_state.properties))
+                form_button = st.button(label='Xác nhận', on_click=form_submit, args=(drug_choose, regex_choose, st.session_state.prescription, st.session_state.properties))
         st.empty()
     
     if 'final_prescription' in st.session_state:

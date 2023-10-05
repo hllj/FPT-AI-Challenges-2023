@@ -40,7 +40,8 @@ st.sidebar.markdown(html_code, unsafe_allow_html=True)
 # Enhance the sidebar styling
 st.sidebar.subheader("Mô tả")
 st.sidebar.write("Đây là một trợ lý y tế ảo giúp kết nối người dùng và dược sĩ\
-    giúp người dùng có thể được điều trị các bệnh thông thường từ xa")
+    giúp người dùng có thể được điều trị các bệnh thông thường từ xa.\
+    \n\n Bạn có thể thoải mái trò chuyện với trợ lý như một nhân viên y tế thông thường.")
 
 from dotenv import load_dotenv
 load_dotenv()
