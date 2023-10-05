@@ -10,6 +10,7 @@ from llama_index import (QuestionAnswerPrompt, RefinePrompt)
 from store_db_index import build_index
 from langchain.chat_models import ChatOpenAI
 from store_mongodb import StorageMongoDB
+from utils import open_file
 
 temperature = 0 # It can be range from (0-1) as openai
 max_tokens = 1024 # token limit
@@ -17,13 +18,7 @@ max_tokens = 1024 # token limit
 index = build_index()
 
 #Inserting Prompt Template
-PROMPT_TEMPLATE = (
-        "Bạn là dược sĩ tại nhà thuốc. Dưới đây là thông tin cụ thể về những đơn thuốc tham khảo dựa trên các triệu chứng:"
-        "\n-----------------------------\n"
-        "{context_str}"
-        "\n-----------------------------\n"
-        "Hãy trả lời câu hỏi sau đây bằng cách đưa ra những đơn thuốc tham khảo dựa trên thông tin được cung cấp phía trên:{query_str} \n"
-    )
+PROMPT_TEMPLATE = open_file("prompt/system_doctor.txt")
 
 QA_PROMPT = QuestionAnswerPrompt(PROMPT_TEMPLATE)
 
@@ -39,19 +34,8 @@ class PatientDescription(BaseModel):
     
 class Prescription(BaseModel):
     text: str
-
-@app.post("/doctor")
-def send_to_doctor(description: PatientDescription):
-    summary = description.summary
-    response = query_engine.query(summary)
-    return {
-        "msg": "SUCCESS",
-        "code": 0,
-        "data": {
-            "response": response
-        }
-    }
-    
+    limit: int
+    sort: int
 
 def get_actives(prescription):
     all_active = []
@@ -68,16 +52,46 @@ def get_actives(prescription):
     all_active.sort(key=lambda x: x['start'])
 
     return all_active
+
+@app.post("/doctor")
+def send_to_doctor(description: PatientDescription):
+    summary = description.summary
+    response = query_engine.query(summary)
+    prescription = response.response
+    all_actives = get_actives(prescription)
+    all_drugs = []
+    
+    for active in all_actives:
+        active_name = active['active']
+        drugs = list(storage_db.find_drug(active_name, 3, 1))
+        for idx, drug in enumerate(drugs):
+            drugs[idx]['_id'] = str(drug['_id'])
+        all_drugs.append({
+            'active': active_name,
+            'drugs': drugs
+        })
+    return {
+        "msg": "SUCCESS",
+        "code": 0,
+        "data": {
+            "prescription": prescription,
+            "drugs": all_drugs
+        }
+    }
+
     
 @app.get("/storage")
 def get_drugs(prescription: Prescription):
     print(prescription.text)
     all_actives = get_actives(prescription.text)
+    limit = prescription.limit
+    sort = prescription.sort
+    
     all_drugs = []
     
     for active in all_actives:
         active_name = active['active']
-        drugs = list(storage_db.find_drug(active_name, 3, -1))
+        drugs = list(storage_db.find_drug(active_name, limit, sort))
         for idx, drug in enumerate(drugs):
             drugs[idx]['_id'] = str(drug['_id'])
         all_drugs.append({
@@ -94,4 +108,3 @@ def get_drugs(prescription: Prescription):
             "response": all_drugs
         }
     }
-    
