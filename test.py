@@ -6,7 +6,7 @@ import json
 class RabbitMQ_Client(object):
 
     def __init__(self):
-        url = os.environ.get('CLOUDAMQP_URL', 'amqp://ndtfovdr:pRLAJm2d7gIyFOaxlq74Q0PEg3fDsLnw@gerbil.rmq.cloudamqp.com/ndtfovdr')
+        url = os.environ.get('CLOUDAMQP_URL', 'amqp://ezclrtka:zNMh77RlTx9Vz-S1bal3EILSwNcOpDiO@fuji.lmq.cloudamqp.com/ezclrtka')
         params = pika.URLParameters(url)
         params.socket_timeout = 10
 
@@ -47,16 +47,7 @@ class RabbitMQ_Client(object):
 
 if __name__ == "__main__":
     txt = """
-    Đây là một số thông tin mà tôi đã tổng hợp
-
-    "Tuổi": 23 tuổi
-    "Giới tính": Nam
-    "Nhóm bệnh nhân": Người trưởng thành bình thường
-    "Triệu chứng": Nuốt nước bọt thấy đau, sờ vào cổ thấy nóng nhẹ, có chút đờm
-    "Khởi phát": 3 ngày trước
-    "Bệnh đi kèm": Không
-    "Thuốc hiện tại": Feburic
-    "Dị ứng": Không
+    Đây là một số thông tin mà tôi đã tổng hợp \n\n"Tuổi": 23 tuổi\n\n"Giới tính": Nam \n\n"Nhóm bệnh nhân": Người trưởng thành bình thường \n\n"Triệu chứng": Nuốt nước bọt thấy đau, sờ vào cổ thấy nóng nhẹ, có chút đờm\n\n"Khởi phát": 3 ngày trước\n\n\"Bệnh đi kèm": Không\n\n\"Thuốc hiện tại": Feburic\n\n"Dị ứng": Không
     """
     rabbitMQ = RabbitMQ_Client()
 
