@@ -51,7 +51,8 @@ def callback_doctor_app(ch, method, properties, body):
     state = {
         'sessionId': st.session_state.sessionId,
         'prescription': prescription,
-    }   
+    }
+    st.rerun()
     with open(f'doctors/{st.session_state.sessionId}.json', 'w', encoding='utf-8') as f:
         json.dump(state, f, ensure_ascii=False, indent=4)
         
