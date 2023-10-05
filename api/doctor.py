@@ -47,11 +47,16 @@ def get_actives(prescription):
     for active in storage_db.actives:
         if active == None:
             continue
-        if active in prescription:
-            start = prescription.find(active)
+        pattern = active.replace('(', '\(').replace(')', '\)')
+        if active == 'Naphazoline nhỏ mũi':
+            print('check check', pattern, re.search(pattern, prescription))
+        x = re.search(pattern, prescription)
+        if x:
+            
+            # start = prescription.find(active)
             all_active.append({
                 'active': active, 
-                'start': start
+                'start': x.start()
             })
     
     all_active.sort(key=lambda x: x['start'])
@@ -113,4 +118,3 @@ def get_drugs(prescription: Prescription):
             "response": all_drugs
         }
     }
-    

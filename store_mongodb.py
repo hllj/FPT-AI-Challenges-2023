@@ -10,7 +10,8 @@ class StorageMongoDB:
         )
         self.db = connection[db]
         
-        self._actives = self.db['drug'].distinct('Hoạt chất')
+        self._actives = None
+
         
     def insert_one(self, collection_name, item):
         collection = self.db[collection_name]
@@ -20,13 +21,29 @@ class StorageMongoDB:
         collection = self.db[collection_name]
         collection.insert_many(items)
         
-    def find_drug(self, active_name, limit=3, sort=-1):
+    def find_drug(self, query_string, limit=3, sort=-1):
+        query_string = query_string.replace('(', '\(').replace(')', '\)')
         collection = self.db['drug']
-        items = collection.find({'Hoạt chất': active_name}).sort('Số lượng', sort).limit(limit)
+        items = collection.find({'query': {"$regex": query_string}}).sort('Số lượng', sort).limit(limit)
         return items
+    
+    def create_query_string(self):
+        self.db['drug'].aggregate([
+            { "$project": { 
+                    "query": { "$concat": [
+                        "$Hoạt chất",
+                        {"$toString": {"$ifNull": [{"$concat": [".*", "$Liều dùng"]}, ""]} },
+                    ]
+                    } 
+                } 
+            },
+            { "$merge": "drug" }
+        ])
     
     @property
     def actives(self):
+        if self._actives is None:
+            self._actives = self.db['drug'].distinct('query')
         return self._actives
         
 def push_collections():
@@ -43,6 +60,16 @@ def push_collections():
     with open("data/storage/add_filtered.json", encoding='utf-8') as f:
         add_items = json.load(f)
     db.insert_many("add", add_items)
+    
+    db.create_query_string()
         
 if __name__ == '__main__':
     push_collections()
+    
+    # MONGODB_SERVER = "localhost"
+    # MONGODB_PORT = 27017
+    # MONGODB_DB = "storage"
+    
+    # db = StorageMongoDB(MONGODB_SERVER, MONGODB_PORT, MONGODB_DB)
+    
+    # print(db.actives)
