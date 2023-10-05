@@ -12,6 +12,7 @@ import io
 from PIL import Image
 import qrcode
 import time
+from streamlit_star_rating import st_star_rating
 
 if 'sessionId' not in st.session_state:
     st.session_state.sessionId = str(uuid.uuid4())
@@ -50,7 +51,7 @@ system_text = open_file('prompt/system_patient.txt')
 
 def callback_doctor_app(ch, method, properties, body):
     prescription = body.decode("utf-8")
-    st.markdown("Đơn thuốc của bác sĩ \n" + prescription)   
+    st.markdown("Đơn thuốc của dược sĩ \n" + prescription)   
     # st.status.update(label="Complete!", state="complete", expanded=False)
     st.session_state.doctor_response = prescription
     state = {
@@ -148,7 +149,7 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
     st.session_state.messages.append({"role": "assistant", "content": full_response})
     
     if 'tôi đã thu thập đủ thông tin' in full_response.lower():
-        st.markdown("Tôi đang xử lý và gửi thông tin tới cho bác sĩ.")
+        st.markdown("Tôi đang xử lý và gửi thông tin tới cho dược sĩ.")
         history_context = "\n"
         for m in st.session_state.messages[:-1]:
             if m["role"] == "user":
@@ -165,20 +166,26 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
         with st.chat_message("assistant"):
             st.markdown("Đây là một số thông tin mà tôi đã tổng hợp\n" + st.session_state.summary)
             
-        with st.status("Đang gửi tới cho bác sĩ ...", expanded=True) as status:
+        with st.status("Đang gửi tới cho dược sĩ ...", expanded=True) as status:
             time.sleep(0.5)
             status.update(label="Complete!", state="complete", expanded=False)
             
         # RabbitMQ Integration
         print(f'summary: {st.session_state.summary}')
-        st.info('Dược sĩ đã tham gia vào đoạn chat', icon="ℹ️")
+        col1, col2 = st.columns([1, 3])
+        with col1:
+            image = Image.open('G:/HoangHa/Project/MyHobby/QNAI/pitchdeck/duocsi.jpg')
+            st.image(image,use_column_width="auto")
+        with col2:
+            st.info('Dược sĩ đã tham gia vào đoạn chat \n\n Tên: Thư Nguyễn \n\n Mã dược sĩ: 37482619 \n\n Chức vụ: Dược sĩ bán thuốc \n\n Đơn vị: Nhà thuốc Long Châu', icon="ℹ️")
+
         channel.basic_publish('', routing_key='request-queue', properties=pika.BasicProperties(
             reply_to=reply_queue.method.queue,
             correlation_id=st.session_state.sessionId
         ), body=st.session_state.summary)
 
         channel.start_consuming()
-      
+    
     state = {
         'sessionId': st.session_state.sessionId,
         'messages': st.session_state.messages,
@@ -190,30 +197,54 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
 
 def drug_proceed():
     st.session_state.proceed = True
-            
+
 if 'doctor_response' in st.session_state:
-        with st.spinner('Xin chờ một chút ...'):
-            time.sleep(1)
-        st.success('Bác sĩ đã xử lý xong!')
-        with st.chat_message("doctor"):
-            st.markdown(st.session_state.doctor_response)
-        agree_button = st.button('Tôi đồng ý', key="agree_btn")
-        disagree_button = st.button('Tôi không đồng ý', key="disagree_btn")
+    with st.spinner('Xin chờ một chút ...'):
+        time.sleep(1)
+    st.success('Dược sĩ đã xử lý xong!')
+    with st.chat_message("doctor", avatar="👨‍⚕"):
+        st.markdown(st.session_state.doctor_response)
+
+    col1, col2 = st.columns(2)
+    
+    # Create containers for both buttons
+    agree_button_container = col1.empty()
+    disagree_button_container = col2.empty()
+    
+    if not st.session_state.get("agree_disagree_clicked", False):
+        agree_button = agree_button_container.button('Tôi đồng ý', key="agree_btn")
+        disagree_button = disagree_button_container.button('Tôi không đồng ý', key="disagree_btn")
+
         if agree_button:
+            st.session_state.agree_disagree_clicked = True
             st.session_state.agree = True
             user_agreement = 'Tôi đồng ý'
-        else:
+            # Empty the containers
+            agree_button_container.empty()
+            disagree_button_container.empty()
+        elif disagree_button:
+            st.session_state.agree_disagree_clicked = True
             st.session_state.agree = False
             user_agreement = 'Tôi không đồng ý'
-        
-        if st.session_state.agree:
-            with st.chat_message("user"):
-                st.markdown(user_agreement)
-                            
-            with st.chat_message("assistant"):
-                st.markdown("Cảm ơn bạn đã tin tưởng vào chúng tôi. \n\n Bạn có muốn chúng tôi đặt đơn thuốc giúp bạn không ạ?")
+            # Empty the containers
+            agree_button_container.empty()
+            disagree_button_container.empty()
+
+    if st.session_state.get("agree_disagree_clicked", False):
+        with st.chat_message("user"):
+            user_agreement = 'Tôi đồng ý' if st.session_state.get("agree", False) else 'Tôi không đồng ý'
+            st.markdown(user_agreement)
+
+        with st.chat_message("assistant"):
+            st.markdown("Cảm ơn bạn đã tin tưởng vào chúng tôi. \n\n Bạn có muốn chúng tôi đặt đơn thuốc giúp bạn không ạ?")
             
-            st.button('Có, hãy giúp tôi đặt đơn hàng!', on_click=drug_proceed)
+        order_button_container = st.empty()
+        if not st.session_state.get("order_button_clicked", False):
+            order_button = order_button_container.button('Có, hãy giúp tôi đặt đơn hàng!')
+            if order_button:
+                st.session_state.order_button_clicked = True
+                order_button_container.empty()
+                drug_proceed()
 
 if 'proceed' in st.session_state and st.session_state.proceed == True:
     with st.spinner('Đang thiết lập đơn hàng'):
@@ -226,4 +257,6 @@ if 'proceed' in st.session_state and st.session_state.proceed == True:
 
     with st.chat_message("assistant"):
         st.image(img_byte_arr, width=150)
-        st.info('Chúng tôi đã thiết lập đơn hàng cho bạn, vui lòng bạn quét mã QR để tiến hành đặt đơn')
+        st.info('Chúng tôi đã thiết lập đơn hàng cho bạn, vui lòng bạn quét mã QR để tiến hành đặt đơn. \n\n Nếu bạn có bất kì thắc mắc nào có thể liên hệ tới đường dây nóng của Long Châu: 1800 6928')
+        
+        stars = st_star_rating("Bạn đánh giá về buổi tư vấn như thế nào?", maxValue=5, defaultValue=5, key="rating")

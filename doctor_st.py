@@ -109,7 +109,7 @@ if __name__ == "__main__":
     # Enhance the sidebar styling
     st.sidebar.subheader("Mô tả")
     st.sidebar.write("Đây là một trợ lý y tế ảo dành cho dược sĩ dễ dàng kê các đơn thuốc phù hợp cho bệnh nhân")
-        
+    
     if 'prescription' in st.session_state and ('final_prescription' not in st.session_state) and ('actives' in st.session_state and len(st.session_state.actives) > 0):
         with st.empty():
             col1, col2, col3 = st.columns([3, 3, 6])
