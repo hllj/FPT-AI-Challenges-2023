@@ -1,6 +1,7 @@
 # Library
 import glob
 import json
+import re
 import uuid
 import openai
 import requests
@@ -50,12 +51,14 @@ def click_button_suggestion(summary_info,properties):
     st.session_state.actives = actives
     st.session_state.prescription = prescription
                     
-def form_submit(drug_choose,prescription,properties):
+def form_submit(drug_choose, regex_choose, prescription,properties):
     text = "Bạn đã chọn\n\n"
     final_prescription = prescription
     for active in drug_choose:
         text += f"- Hoạt chất {active}: " + drug_choose[active] + "\n\n"
-        final_prescription = final_prescription.replace(active, drug_choose[active])
+        pattern = regex_choose[active].replace('(', '\(').replace(')', '\)')
+        # final_prescription = final_prescription.replace(active, drug_choose[active])
+        final_prescription = re.sub(pattern, drug_choose[active], final_prescription)
     st.session_state.final_prescription = final_prescription
 
 def back_on_click():
@@ -113,21 +116,27 @@ if __name__ == "__main__":
             with col2:
                 with st.expander('Hãy lựa chọn các biệt dược', expanded=True):
                     drug_choose = {}
+                    regex_choose = {}
                     for idx, active in enumerate(st.session_state.actives):
                         options = ()
                         for drug in active['drugs']:
                             options = options + (drug['Biệt dược'], )
-                        st.markdown(f'{idx + 1}. ' + '**' + 'Hoạt chất: ' + active['active'] + '**')
+                        label = '**' + 'Hoạt chất: ' + active['active'].replace('*', '').replace('.', ' ') + '**'
+                        st.markdown(f'{idx + 1}. ' + label)
                         col1, col2 = st.columns([8, 4])
                         with col1:
                             option = st.selectbox(
                                 key=active['active'],
-                                label='**' + 'Hoạt chất: ' + active['active'] + '**',
+                                label=label,
                                 label_visibility="collapsed",
                                 options=options,
                                 index=0,
                             )
                         drug_choose[active['active']] = option
+                        for drug in active['drugs']:
+                            if drug['Biệt dược'] == option:
+                                regex_choose[active['active']] = drug[drug['query_field']]
+                                break
                         quantity = [drug['Số lượng'] for drug in active['drugs'] if drug['Biệt dược'] == option][0]
                         col2.text('Số lượng: ' + str(quantity))
                     css='''
@@ -140,7 +149,7 @@ if __name__ == "__main__":
                         '''
                     st.markdown(css, unsafe_allow_html=True)
                 st.text_area(label="Lưu ý của dược sĩ", placeholder="Ghi chú của bạn", key='doctor_reminder')
-                form_button = st.button(label='Xác nhận', on_click=form_submit, args=(drug_choose,st.session_state.prescription, st.session_state.properties))
+                form_button = st.button(label='Xác nhận', on_click=form_submit, args=(drug_choose, regex_choose, st.session_state.prescription, st.session_state.properties))
         st.empty()
     
     if 'final_prescription' in st.session_state:

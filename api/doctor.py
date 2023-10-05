@@ -43,25 +43,43 @@ class Prescription(BaseModel):
     sort: int
 
 def get_actives(prescription):
-    all_active = []
+    found_actives = []
+    
+    for regex_drug in storage_db.regex_drugs:
+        if regex_drug == None:
+            continue
+        pattern = regex_drug.replace('(', '\(').replace(')', '\)')
+        x = re.search(pattern, prescription)
+        if x:
+            found_actives.append({
+                'query_field': 'Query',
+                'active': regex_drug, 
+                'start': x.start()
+            })
+    
     for active in storage_db.actives:
         if active == None:
             continue
         pattern = active.replace('(', '\(').replace(')', '\)')
-        if active == 'Naphazoline nhỏ mũi':
-            print('check check', pattern, re.search(pattern, prescription))
         x = re.search(pattern, prescription)
         if x:
-            
-            # start = prescription.find(active)
-            all_active.append({
+            found_actives.append({
+                'query_field': 'Hoạt chất',
                 'active': active, 
                 'start': x.start()
             })
     
-    all_active.sort(key=lambda x: x['start'])
+    found_actives.sort(key=lambda x: (x['start'], -len(x['active'])))
+    
+    all_actives = []
+    all_actives.append(found_actives[0])
+    
+    for idx in range(1, len(found_actives)):
+        if found_actives[idx]['start'] == found_actives[idx - 1]['start']:
+            continue
+        all_actives.append(found_actives[idx])
 
-    return all_active
+    return all_actives
 
 @app.post("/doctor")
 def send_to_doctor(description: PatientDescription):
@@ -73,9 +91,11 @@ def send_to_doctor(description: PatientDescription):
     
     for active in all_actives:
         active_name = active['active']
-        drugs = list(storage_db.find_drug(active_name, 3, 1))
+        query_field = active['query_field']
+        drugs = list(storage_db.find_drug(query_field, active_name, 3, 1))
         for idx, drug in enumerate(drugs):
             drugs[idx]['_id'] = str(drug['_id'])
+            drugs[idx]['query_field'] = query_field
         all_drugs.append({
             'active': active_name,
             'drugs': drugs
@@ -101,9 +121,11 @@ def get_drugs(prescription: Prescription):
     
     for active in all_actives:
         active_name = active['active']
-        drugs = list(storage_db.find_drug(active_name, limit, sort))
+        query_field = active['query_field']
+        drugs = list(storage_db.find_drug(query_field, active_name, limit, sort))
         for idx, drug in enumerate(drugs):
             drugs[idx]['_id'] = str(drug['_id'])
+            drugs[idx]['query_field'] = query_field
         all_drugs.append({
             'active': active_name,
             'drugs': drugs
