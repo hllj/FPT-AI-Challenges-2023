@@ -85,3 +85,4 @@ if __name__ == '__main__':
     with open('data/search_option.json', 'w') as f:
         json.dump({'options': search_options}, f)
         
+        
