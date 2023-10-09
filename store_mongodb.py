@@ -72,5 +72,16 @@ def push_collections():
     db.create_query_string()
         
 if __name__ == '__main__':
-    push_collections()
+    # push_collections()
     
+    MONGODB_SERVER = "localhost"
+    MONGODB_PORT = 27017
+    MONGODB_DB = "storage"
+    
+    db = StorageMongoDB(MONGODB_SERVER, MONGODB_PORT, MONGODB_DB)
+    search_options = [regex for regex in db.regex_drugs if regex is not None]
+    search_options = list(set(search_options))
+    search_options.sort()
+    with open('data/search_option.json', 'w') as f:
+        json.dump({'options': search_options}, f)
+        

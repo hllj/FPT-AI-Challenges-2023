@@ -3,7 +3,7 @@ import re
 from dotenv import load_dotenv
 load_dotenv('.env.default')
 import os
-from typing import Union
+from typing import Union, List
 from fastapi import FastAPI
 from pydantic import BaseModel
 from llama_index import (QuestionAnswerPrompt, RefinePrompt)
@@ -34,6 +34,11 @@ class PatientDescription(BaseModel):
     
 class Prescription(BaseModel):
     text: str
+    limit: int
+    sort: int
+    
+class Actives(BaseModel):
+    actives: List[str]
     limit: int
     sort: int
 
@@ -126,12 +131,34 @@ def get_drugs(prescription: Prescription):
             'drugs': drugs
         })
     
-    print('check', all_drugs)
+    return {
+        "msg": "SUCCESS",
+        "code": 0,
+        "data": {
+            "drugs": all_drugs
+        }
+    }
+    
+@app.get("/storage/active")
+def get_drugs(actives: Actives):
+    all_drugs = []
+    limit = actives.limit
+    sort = actives.sort
+    for active_name in actives.actives:
+        query_field = 'Query'
+        drugs = list(storage_db.find_drug(query_field, active_name, limit, sort))
+        for idx, drug in enumerate(drugs):
+            drugs[idx]['_id'] = str(drug['_id'])
+            drugs[idx]['query_field'] = query_field
+        all_drugs.append({
+            'active': active_name,
+            'drugs': drugs
+        })
     
     return {
         "msg": "SUCCESS",
         "code": 0,
         "data": {
-            "response": all_drugs
+            "drugs": all_drugs
         }
     }
