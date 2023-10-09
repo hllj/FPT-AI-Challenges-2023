@@ -51,14 +51,23 @@ def click_button_suggestion(summary_info,properties):
     st.session_state.actives = actives
     st.session_state.prescription = prescription
                     
-def form_submit(drug_choose, regex_choose, prescription,properties):
+def form_submit(drug_choose, regex_choose, prescription, properties):
+    print('drug choose', drug_choose)
     text = "Bạn đã chọn\n\n"
     final_prescription = prescription
+    addition_drugs = []
     for active in drug_choose:
         text += f"- Hoạt chất {active}: " + drug_choose[active] + "\n\n"
         pattern = regex_choose[active].replace('(', '\(').replace(')', '\)')
-        # final_prescription = final_prescription.replace(active, drug_choose[active])
-        final_prescription = re.sub(pattern, drug_choose[active], final_prescription)
+        if re.search(pattern, final_prescription):
+            final_prescription = re.sub(pattern, drug_choose[active], final_prescription)
+        else:
+            addition_drugs.append(active)
+    
+    if (len(addition_drugs) > 0):
+        final_prescription += "\n\n Một số thuốc bổ sung từ bác sĩ: \n\n"
+        for idx, active in enumerate(addition_drugs):
+            final_prescription += f"{idx + 1}. {drug_choose[active]} \n\n"
     st.session_state.final_prescription = final_prescription
 
 def back_on_click():
@@ -78,6 +87,32 @@ def consumer(st):
     st.session_state.channel.basic_consume(queue='request-queue', auto_ack=True,
         on_message_callback=on_request_message_received)
     st.session_state.channel.start_consuming()
+
+with open('data/search_option.json', 'r') as f:
+    active_search_options = json.load(f)['options']
+
+def on_click_add_new_actives(new_actives_options):
+    list_active = [active['active'] for active in st.session_state.actives]
+    
+    new_actives_options_filtered = [active_name for active_name in new_actives_options if active_name not in list_active]
+    
+    url = "http://0.0.0.0:3000/storage/active"
+
+    payload = json.dumps({
+        "actives": new_actives_options_filtered,
+        "limit": 3,
+        "sort": 1
+    })
+    headers = {
+        'Content-Type': 'application/json'
+    }
+
+    response = requests.request("GET", url, headers=headers, data=payload)
+    
+    actives = response.json()['data']['drugs']
+    
+    st.session_state.actives.extend(actives)
+    
 
 if __name__ == "__main__":
     # Custom Streamlit app title and icon
@@ -107,6 +142,8 @@ if __name__ == "__main__":
         
     if 'prescription' in st.session_state and ('final_prescription' not in st.session_state) and ('actives' in st.session_state and len(st.session_state.actives) > 0):
         st.empty()
+        st.session_state.drug_choose = {}
+        st.session_state.regex_choose = {}
         with st.container():
             col1, col2 = st.columns([4, 8])
             with col1:
@@ -115,8 +152,7 @@ if __name__ == "__main__":
                 col1.info(st.session_state.prescription, icon="🤖")
             with col2:
                 with st.expander('Hãy lựa chọn các biệt dược', expanded=True):
-                    drug_choose = {}
-                    regex_choose = {}
+                    
                     for idx, active in enumerate(st.session_state.actives):
                         options = ()
                         for drug in active['drugs']:
@@ -132,10 +168,10 @@ if __name__ == "__main__":
                                 options=options,
                                 index=0,
                             )
-                        drug_choose[active['active']] = option
+                        st.session_state.drug_choose[active['active']] = option
                         for drug in active['drugs']:
                             if drug['Biệt dược'] == option:
-                                regex_choose[active['active']] = drug[drug['query_field']]
+                                st.session_state.regex_choose[active['active']] = drug[drug['query_field']]
                                 break
                         quantity = [drug['Số lượng'] for drug in active['drugs'] if drug['Biệt dược'] == option][0]
                         col2.text('Số lượng: ' + str(quantity))
@@ -143,13 +179,17 @@ if __name__ == "__main__":
                         <style>
                             [data-testid="stExpander"] div:has(>.streamlit-expanderContent) {
                                 overflow: scroll;
-                                height: 400px;
+                                height: 500px;
                             }
                         </style>
                         '''
                     st.markdown(css, unsafe_allow_html=True)
+                    
+                    with st.container():
+                        new_actives_options = st.multiselect(label='Chọn thêm hoạt chất', options=active_search_options, default=[])
+                        st.button('Thêm hoạt chất', on_click=on_click_add_new_actives, args=(new_actives_options, ))
                 st.text_area(label="Lưu ý của dược sĩ", placeholder="Ghi chú của bạn", key='doctor_reminder')
-                form_button = st.button(label='Xác nhận', on_click=form_submit, args=(drug_choose, regex_choose, st.session_state.prescription, st.session_state.properties))
+                form_button = st.button(label='Xác nhận', on_click=form_submit, args=(st.session_state.drug_choose, st.session_state.regex_choose, st.session_state.prescription, st.session_state.properties))
         st.empty()
     
     if 'final_prescription' in st.session_state:
