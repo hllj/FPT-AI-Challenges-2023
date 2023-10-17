@@ -12,10 +12,12 @@ import io
 from PIL import Image
 import qrcode
 import time
-from streamlit_star_rating import st_star_rating
+from streamlit_feedback import streamlit_feedback
 
 if 'sessionId' not in st.session_state:
     st.session_state.sessionId = str(uuid.uuid4())
+
+st.session_state.run_id = None
 
 # Custom Streamlit app title and icon
 st.set_page_config(
@@ -213,6 +215,7 @@ if 'doctor_response' in st.session_state:
     disagree_button_container = col2.empty()
     
     if not st.session_state.get("agree_disagree_clicked", False):
+        st.markdown("Bạn có đồng ý với đơn thuốc của dược sĩ không?")
         agree_button = agree_button_container.button('Tôi đồng ý', key="agree_btn")
         disagree_button = disagree_button_container.button('Tôi không đồng ý', key="disagree_btn")
 
@@ -260,4 +263,10 @@ if 'proceed' in st.session_state and st.session_state.proceed == True:
         st.image(img_byte_arr, width=150)
         st.info('Chúng tôi đã thiết lập đơn hàng cho bạn, vui lòng bạn quét mã QR để tiến hành đặt đơn. \n\n Nếu bạn có bất kì thắc mắc nào có thể liên hệ tới đường dây nóng của Long Châu: 1800 6928')
         
-        stars = st_star_rating("Bạn đánh giá về buổi tư vấn như thế nào?", maxValue=5, defaultValue=5, key="rating")
+        feedback = streamlit_feedback(
+            feedback_type="thumbs",  # Apply the selected feedback style
+            # optional_text_label="[Optional] Please provide an explanation",  # Allow for additional comments
+            key=f"feedback_{st.session_state.run_id}",
+        )
+
+    

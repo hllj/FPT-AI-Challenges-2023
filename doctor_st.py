@@ -32,6 +32,7 @@ def on_request_message_received(channel, method, properties, body):
     st.session_state.properties = properties
     
     col1, _ = st.columns([1, 1])
+    col1.markdown("Thông tin tổng hợp:")
     col1.info(st.session_state.summary_info, icon="ℹ️")
     col1.button(label='Đưa ra đơn thuốc tham khảo', key="summary_button", on_click=click_button_suggestion, args=(st.session_state.summary_info, st.session_state.properties,))
 
@@ -110,8 +111,10 @@ if __name__ == "__main__":
         with st.container():
             col1, col2 = st.columns([1, 1])
             with col1:
+                st.markdown("Thông tin tổng hợp:")
                 col1.info(st.session_state.summary_info, icon="ℹ️")
                 col1.divider()
+                st.markdown("Đơn thuốc gợi ý:")
                 col1.info(st.session_state.prescription, icon="🤖")
             with col2:
                 with st.expander('Hãy lựa chọn các biệt dược', expanded=True):
@@ -159,8 +162,10 @@ if __name__ == "__main__":
         with st.container():
             col1, col2 = st.columns([4, 8])
             with col1:
+                st.markdown("Thông tin tổng hợp:")
                 col1.info(st.session_state.summary_info, icon="ℹ️")
                 col1.divider()
+                st.markdown("Đơn thuốc gợi ý:")
                 col1.info(st.session_state.prescription, icon="🤖")
             with col2:
                 final = st.session_state.final_prescription
