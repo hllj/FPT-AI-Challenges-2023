@@ -177,7 +177,7 @@ if prompt := st.chat_input("Bạn cần hỗ trợ điều gì?"):
         print(f'summary: {st.session_state.summary}')
         col1, col2 = st.columns([1, 3])
         with col1:
-            image = Image.open('G:/HoangHa/Project/MyHobby/QNAI/pitchdeck/duocsi.jpg')
+            image = Image.open('images/duocsi.jpeg')
             st.image(image,use_column_width="auto")
         with col2:
             st.info('Dược sĩ đã tham gia vào đoạn chat \n\n Tên: Thư Nguyễn \n\n Mã dược sĩ: 37482619 \n\n Chức vụ: Dược sĩ bán thuốc \n\n Đơn vị: Nhà thuốc Long Châu', icon="ℹ️")
