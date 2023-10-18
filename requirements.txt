@@ -13,3 +13,4 @@ watchdog
 pika
 pymongo
 st-star-rating
+streamlit-feedback
