@@ -30,12 +30,18 @@ CLOUDAMQP_URL=
 pip install -r requirements.txt
 ```
 
-# Storage
+# Databases
 
-## Import data hoạt chất và tpcn vào mongoDB
+## Import data hoạt chất và tpcn vào mongoDB cho Storage Database
 
 ```bash
 python store_mongodb.py
+```
+
+## Import data vào Pinecone
+
+```bash
+python store_db_index.py
 ```
 
 ## Start API
