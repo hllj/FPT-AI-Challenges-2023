@@ -1,13 +1,28 @@
 # QNAI-Challenges-2023
-Quy Nhon AI Challenges 2023 - Challenge 2
+FPT AI Challenges 2023 - Challenge 2
 
 # API
 
 ## Thêm OPEN_API_KEY và Cohere API KEY vào file .env
 
-OPEN_API_KEY=
+- Thêm OPEN_API_KEY và Cohere API KEY vào file .env
+- Setup Pinecone database với PINECONE_API_KEY, INDEX_NAME, INDEX_ENV
+- Setup MongoDB cho storage
+- Setup RabbitMQ từ https://www.cloudamqp.com/
 
+```bash
+OPENAI_API_KEY=
 COHERE_API_KEY=
+PINECONE_API_KEY=
+INDEX_NAME=
+INDEX_ENV=
+
+MONGODB_SERVER="localhost"
+MONGODB_PORT=27017
+MONGODB_DB="storage"
+
+CLOUDAMQP_URL=
+```
 
 ## Install libraries
 

@@ -72,7 +72,7 @@ def push_collections():
     db.create_query_string()
         
 if __name__ == '__main__':
-    # push_collections()
+    push_collections()
     
     MONGODB_SERVER = "localhost"
     MONGODB_PORT = 27017
